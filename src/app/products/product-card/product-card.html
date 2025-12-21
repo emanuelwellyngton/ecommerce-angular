@@ -1,4 +1,4 @@
-<div class="card product-card">
+<div class="card product-card" [routerLink]="['/products', product.id]" style="cursor: pointer;">
     <div class="card-image-container">
         <img [src]="product.imageUrl" [alt]="product.name" class="card-image">
         <span *ngIf="product.isNew" class="badge-new">Novo</span>
@@ -7,6 +7,6 @@
         <span class="category">{{ product.category }}</span>
         <h3 class="product-name">{{ product.name }}</h3>
         <p class="product-price">{{ product.price | currency }}</p>
-        <button class="btn btn-primary add-btn">Adicionar</button>
+        <button class="btn btn-primary add-btn" (click)="$event.stopPropagation()">Adicionar</button>
     </div>
 </div>

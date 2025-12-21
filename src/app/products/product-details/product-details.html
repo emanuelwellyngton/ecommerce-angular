@@ -1,0 +1,30 @@
+<div class="container product-details-page" *ngIf="product$ | async as product; else loading">
+    <div class="product-grid">
+        <div class="product-image-container">
+            <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
+        </div>
+
+        <div class="product-info">
+            <span class="product-category">{{ product.category }}</span>
+            <h1 class="product-name">{{ product.name }}</h1>
+            <div class="product-price">{{ product.price | currency }}</div>
+
+            <p class="product-description">{{ product.description }}</p>
+
+            <div class="product-actions">
+                <!-- Placeholder for future functionality -->
+                <button class="btn btn-primary">Add to Cart</button>
+            </div>
+
+            <div class="product-meta">
+                <span *ngIf="product.isNew" class="badge">New Arrival</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #loading>
+    <div class="container loading-state">
+        <p>Loading product details...</p>
+    </div>
+</ng-template>
