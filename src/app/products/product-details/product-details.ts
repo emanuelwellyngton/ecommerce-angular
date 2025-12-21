@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProductService } from '../../core/services/product';
+import { CartService } from '../../core/services/cart.service';
 import { Product } from '../../core/models/product.model';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -18,8 +19,13 @@ export class ProductDetailsComponent implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
-        private productService: ProductService
+        private productService: ProductService,
+        private cartService: CartService
     ) { }
+
+    addToCart(product: Product) {
+        this.cartService.addToCart(product);
+    }
 
     ngOnInit(): void {
         this.product$ = this.route.paramMap.pipe(
