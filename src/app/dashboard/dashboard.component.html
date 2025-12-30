@@ -1,0 +1,24 @@
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo">
+            <h2>Admin Panel</h2>
+        </div>
+        <nav>
+            <ul>
+                <li><a routerLink="/dashboard" routerLinkActive="active"
+                        [routerLinkActiveOptions]="{exact: true}">Overview</a></li>
+                <li><a routerLink="/dashboard/products" routerLinkActive="active">Products</a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="user-info">
+                <span>Admin User</span>
+            </div>
+        </header>
+        <div class="content-wrapper">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
+</div>
