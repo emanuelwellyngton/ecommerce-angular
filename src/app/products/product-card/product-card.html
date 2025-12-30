@@ -1,4 +1,4 @@
-<div class="card product-card" [routerLink]="['/products', product.id]" style="cursor: pointer;">
+<div class="card product-card" [routerLink]="['/site/products', product.id]" style="cursor: pointer;">
     <div class="card-image-container">
         <img [src]="product.imageUrl" [alt]="product.name" class="card-image">
         <span *ngIf="product.isNew" class="badge-new">Novo</span>
