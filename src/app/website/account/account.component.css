@@ -1,0 +1,205 @@
+.account-page {
+  min-height: calc(100vh - 80px);
+  padding-top: 100px;
+  padding-bottom: 80px;
+  background: var(--color-background-surface);
+}
+
+.account-container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--spacing-margin-desktop);
+}
+
+.account-header {
+  margin-bottom: 40px;
+}
+
+.account-title {
+  font-size: var(--font-size-headline-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+
+.account-greeting {
+  font-size: var(--font-size-body-md);
+  color: var(--color-text-muted);
+}
+
+.account-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* Sidebar Nav */
+.account-nav {
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: sticky;
+  top: 100px;
+}
+
+.account-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.account-nav-item:hover {
+  background: var(--color-surface-container-low);
+  color: var(--color-primary);
+}
+
+.account-nav-item.active {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.account-nav-item.logout {
+  margin-top: 8px;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 20px;
+  color: var(--color-error);
+}
+
+.account-nav-item.logout:hover {
+  background: var(--color-error-container);
+  color: var(--color-on-error-container);
+}
+
+/* Content */
+.account-content {
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  padding: 32px;
+}
+
+.content-title {
+  font-size: var(--font-size-headline-md);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 24px;
+}
+
+/* Orders */
+.order-card {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.order-card-id {
+  font-size: var(--font-size-label-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.order-card-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-label-sm);
+  color: var(--color-text-muted);
+}
+
+.order-card-total {
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+/* Addresses */
+.address-card {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.address-main p {
+  font-size: var(--font-size-body-md);
+  color: var(--color-on-surface);
+  line-height: 1.6;
+}
+
+/* Payment */
+.payment-card {
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.payment-icon { font-size: 28px; color: var(--color-on-surface-variant); }
+.payment-type { font-size: var(--font-size-label-sm); font-weight: 600; }
+.payment-sub { font-size: var(--font-size-label-xs); color: var(--color-text-muted); }
+
+/* Profile */
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-row {
+  display: flex;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.profile-label {
+  font-size: var(--font-size-label-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.profile-value {
+  font-size: var(--font-size-body-md);
+  color: var(--color-on-surface);
+}
+
+@media (max-width: 768px) {
+  .account-page { padding-top: 80px; }
+  .account-container { padding: 0 var(--spacing-margin-mobile); }
+  .account-layout { grid-template-columns: 1fr; }
+  .account-nav { position: static; }
+}
