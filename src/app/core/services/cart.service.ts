@@ -1,4 +1,5 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { Product } from '../models/product.model';
 
 export interface CartItem extends Product {
@@ -12,6 +13,7 @@ export class CartService {
     private cartItemsSignal = signal<CartItem[]>([]);
 
     readonly cartItems = this.cartItemsSignal.asReadonly();
+    readonly cartItems$ = toObservable(this.cartItemsSignal);
 
     readonly totalItems = computed(() =>
         this.cartItemsSignal().reduce((acc, item) => acc + item.quantity, 0)
@@ -20,6 +22,7 @@ export class CartService {
     readonly totalPrice = computed(() =>
         this.cartItemsSignal().reduce((acc, item) => acc + (item.price * item.quantity), 0)
     );
+    readonly cartTotal$ = toObservable(this.totalPrice);
 
     constructor() {
         this.loadCart();
