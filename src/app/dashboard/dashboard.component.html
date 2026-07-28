@@ -1,24 +1,54 @@
-<div class="dashboard-container">
-    <aside class="sidebar">
-        <div class="logo">
-            <h2>Admin Panel</h2>
-        </div>
-        <nav>
-            <ul>
-                <li><a routerLink="/dashboard" routerLinkActive="active"
-                        [routerLinkActiveOptions]="{exact: true}">Overview</a></li>
-                <li><a routerLink="/dashboard/products" routerLinkActive="active">Products</a></li>
-            </ul>
-        </nav>
-    </aside>
-    <main class="main-content">
-        <header class="top-bar">
-            <div class="user-info">
-                <span>Admin User</span>
-            </div>
-        </header>
-        <div class="content-wrapper">
-            <router-outlet></router-outlet>
-        </div>
-    </main>
+<div class="admin-layout">
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" [class.active]="sidebarOpen" (click)="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" [class.open]="sidebarOpen">
+    <div class="sidebar-header">
+      <h1 class="sidebar-title">Admin Console</h1>
+      <p class="sidebar-subtitle">Gerenciamento Geral</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidebar-link">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/dashboard/orders" routerLinkActive="active" class="sidebar-link">
+        <span class="material-symbols-outlined">shopping_bag</span>
+        <span>Pedidos</span>
+      </a>
+      <a routerLink="/dashboard/products" routerLinkActive="active" class="sidebar-link">
+        <span class="material-symbols-outlined">inventory_2</span>
+        <span>Produtos</span>
+      </a>
+      <a routerLink="/dashboard/users" routerLinkActive="active" class="sidebar-link">
+        <span class="material-symbols-outlined">group</span>
+        <span>Clientes</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="sidebar-logout" (click)="logout()">
+        <span class="material-symbols-outlined">logout</span>
+        <span>Sair</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <!-- Mobile Header -->
+    <header class="admin-mobile-header">
+      <button class="mobile-menu-btn" (click)="toggleSidebar()">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <span class="admin-mobile-title">Admin Console</span>
+    </header>
+
+    <!-- Page Content -->
+    <div class="admin-content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
 </div>
