@@ -3,6 +3,7 @@ import { Website } from './website/website';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
+    { path: '', redirectTo: '/site', pathMatch: 'full' },
     {
         path: 'site',
         component: Website,
@@ -12,5 +13,5 @@ export const routes: Routes = [
         path: 'dashboard',
         loadChildren: () => import('./dashboard/dashboard.routes').then(m => m.dashboardRoutes)
     },
-    { path: '**', redirectTo: '' }
+    { path: '**', redirectTo: '/site' }
 ];
