@@ -1,0 +1,78 @@
+<main class="auth-page">
+  <div class="auth-container">
+    <div class="auth-form-side">
+      <div class="auth-form-inner">
+        <div class="auth-header">
+          <h1 class="auth-title">Criar Conta</h1>
+          <p class="auth-subtitle">Junte-se à nossa comunidade e descubra o minimalismo premium.</p>
+        </div>
+
+        <div *ngIf="errorMessage" class="auth-error">
+          <span class="material-symbols-outlined">error</span>
+          {{ errorMessage }}
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="username">Usuário *</label>
+            <input id="username" type="text" class="form-input"
+              [class.error]="form.get('username')?.invalid && form.get('username')?.touched"
+              formControlName="username" placeholder="Escolha um nome de usuário" autocomplete="username" />
+            <span *ngIf="form.get('username')?.errors?.['required'] && form.get('username')?.touched" class="field-error">Usuário é obrigatório</span>
+            <span *ngIf="form.get('username')?.errors?.['minlength'] && form.get('username')?.touched" class="field-error">Mínimo 3 caracteres</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">E-mail *</label>
+            <input id="email" type="email" class="form-input"
+              [class.error]="form.get('email')?.invalid && form.get('email')?.touched"
+              formControlName="email" placeholder="seu@email.com" autocomplete="email" />
+            <span *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="field-error">E-mail inválido</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Senha *</label>
+            <div class="input-with-toggle">
+              <input id="password" [type]="showPassword ? 'text' : 'password'" class="form-input"
+                [class.error]="form.get('password')?.invalid && form.get('password')?.touched"
+                formControlName="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
+              <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
+                <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
+            <span *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="field-error">Mínimo 6 caracteres</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="confirmPassword">Confirmar Senha *</label>
+            <input id="confirmPassword" type="password" class="form-input"
+              [class.error]="(form.get('confirmPassword')?.touched && (form.hasError('passwordMismatch') || form.get('confirmPassword')?.invalid))"
+              formControlName="confirmPassword" placeholder="Repita sua senha" autocomplete="new-password" />
+            <span *ngIf="form.hasError('passwordMismatch') && form.get('confirmPassword')?.touched" class="field-error">As senhas não conferem</span>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg w-full" [disabled]="loading">
+            <span *ngIf="loading" class="material-symbols-outlined spinning">progress_activity</span>
+            <span *ngIf="!loading">Criar Conta</span>
+          </button>
+        </form>
+
+        <p class="auth-switch">
+          Já tem uma conta?
+          <a routerLink="/site/login" class="auth-switch-link">Entrar</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="auth-image-side">
+      <div class="auth-image" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDnftJPMZi0N1aL4Tw9JH-3F76QiIQeNv3lYjlavBMTVjRUdXG391gVY96tZCj8N0o6TNmRyLu_gvOl4UaqMDtvXbl3m7-APHWmCj_APEKlPUJgbe4fyzYP3gn2xptpq3RMPLsuszIwm4tUwzTgHYVQasWpOs2L7poCgssMuH9mg0psDYMJckas7KfVGY0Dv5L4WFuGV0TuV-sGu_9aU6J4F7Cuarw8hWwY5QmGle8bEWgs3sz0jebQi4g9wbOmqu5BUahS1u7YxM0');">
+        <div class="auth-image-overlay">
+          <div class="auth-image-content">
+            <span class="auth-badge">Novo Membro</span>
+            <h2 class="auth-image-title">Bem-vindo à LUXE.</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

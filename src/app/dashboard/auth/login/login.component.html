@@ -1,47 +1,73 @@
-<div class="login-container">
-  <div class="login-card">
-    <div class="login-header">
-      <h2>Bem-vindo de volta</h2>
-      <p>Faça login para acessar o painel</p>
-    </div>
-
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-      <div class="form-group">
-        <label for="username">Usuário</label>
-        <input 
-          id="username" 
-          type="text" 
-          formControlName="username" 
-          placeholder="Digite seu nome de usuário"
-          [class.invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
-        >
-        <div class="error-msg" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
-          Usuário é obrigatório
-        </div>
+<div class="admin-login-page">
+  <div class="admin-login-left">
+    <div class="admin-login-inner">
+      <div class="admin-logo">
+        <span class="admin-logo-text">LUXE</span>
+        <span class="admin-logo-badge">Admin</span>
       </div>
 
-      <div class="form-group">
-        <label for="password">Senha</label>
-        <input 
-          id="password" 
-          type="password" 
-          formControlName="password" 
-          placeholder="Digite sua senha"
-          [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-        >
-        <div class="error-msg" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          Senha é obrigatória
-        </div>
+      <div class="admin-login-header">
+        <h1 class="admin-login-title">Painel Administrativo</h1>
+        <p class="admin-login-subtitle">Entre com suas credenciais para acessar o painel.</p>
       </div>
 
-      <div class="error-alert" *ngIf="errorMessage">
+      <div *ngIf="errorMessage" class="admin-error">
+        <span class="material-symbols-outlined">error</span>
         {{ errorMessage }}
       </div>
 
-      <button type="submit" class="submit-btn" [disabled]="isLoading">
-        <span *ngIf="!isLoading">Entrar no Dashboard</span>
-        <span *ngIf="isLoading" class="loader"></span>
-      </button>
-    </form>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="admin-login-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="admin-username">Usuário</label>
+          <input
+            id="admin-username"
+            type="text"
+            class="form-input"
+            [class.error]="form.get('username')?.invalid && form.get('username')?.touched"
+            formControlName="username"
+            placeholder="Seu nome de usuário"
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="admin-password">Senha</label>
+          <div class="input-wrapper">
+            <input
+              id="admin-password"
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-input"
+              [class.error]="form.get('password')?.invalid && form.get('password')?.touched"
+              formControlName="password"
+              placeholder="Sua senha"
+              autocomplete="current-password"
+            />
+            <button type="button" class="pwd-toggle" (click)="showPassword = !showPassword">
+              <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="admin-login-btn" [disabled]="loading">
+          <span *ngIf="loading" class="material-symbols-outlined spinning">progress_activity</span>
+          <span *ngIf="!loading">Entrar</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="admin-login-right">
+    <div class="admin-login-visual">
+      <div class="visual-content">
+        <h2 class="visual-title">LUXE Admin Console</h2>
+        <p class="visual-sub">Gerencie produtos, pedidos e clientes com eficiência.</p>
+        <ul class="visual-features">
+          <li><span class="material-symbols-outlined">inventory_2</span> Gestão de Produtos</li>
+          <li><span class="material-symbols-outlined">shopping_bag</span> Gestão de Pedidos</li>
+          <li><span class="material-symbols-outlined">group</span> Gestão de Clientes</li>
+          <li><span class="material-symbols-outlined">analytics</span> Relatórios</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>

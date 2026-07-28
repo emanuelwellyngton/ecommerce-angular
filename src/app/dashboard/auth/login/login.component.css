@@ -1,136 +1,178 @@
-.login-container {
+.admin-login-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  background: var(--color-background-surface);
+}
+
+.admin-login-left {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  font-family: 'Inter', -apple-system, sans-serif;
-  color: #f8fafc;
+  padding: 64px;
 }
 
-.login-card {
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 40px;
+.admin-login-inner {
   width: 100%;
-  max-width: 420px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  max-width: 400px;
 }
 
-.login-header {
-  text-align: center;
+.admin-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.admin-logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+}
+
+.admin-logo-badge {
+  font-size: var(--font-size-label-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+}
+
+.admin-login-header {
   margin-bottom: 32px;
 }
 
-.login-header h2 {
-  font-size: 28px;
+.admin-login-title {
+  font-size: var(--font-size-headline-lg-mobile);
   font-weight: 700;
-  margin: 0 0 8px 0;
-  background: linear-gradient(to right, #38bdf8, #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
 }
 
-.login-header p {
-  color: #94a3b8;
-  margin: 0;
-  font-size: 14px;
+.admin-login-subtitle {
+  font-size: var(--font-size-body-md);
+  color: var(--color-text-muted);
 }
 
-.login-form {
+.admin-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--color-error-container);
+  color: var(--color-on-error-container);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-label-sm);
+  margin-bottom: 20px;
+}
+
+.admin-login-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.input-wrapper {
+  position: relative;
 }
 
-.form-group label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #cbd5e1;
+.input-wrapper .form-input {
+  padding-right: 48px;
 }
 
-.form-group input {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid #334155;
-  color: #f8fafc;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 15px;
-  transition: all 0.3s ease;
-  outline: none;
-}
-
-.form-group input:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
-}
-
-.form-group input.invalid {
-  border-color: #ef4444;
-}
-
-.error-msg {
-  color: #ef4444;
-  font-size: 12px;
-  margin-top: 4px;
-}
-
-.error-alert {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  text-align: center;
-}
-
-.submit-btn {
-  background: linear-gradient(to right, #0ea5e9, #6366f1);
-  color: white;
+.pwd-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
   border: none;
-  padding: 14px;
-  border-radius: 8px;
-  font-size: 16px;
+  cursor: pointer;
+  color: var(--color-outline);
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-fast);
+}
+
+.pwd-toggle:hover { color: var(--color-primary); }
+
+.admin-login-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-body-md);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 50px;
+  justify-content: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+  font-family: inherit;
   margin-top: 8px;
 }
 
-.submit-btn:hover:not(:disabled) {
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+.admin-login-btn:hover:not(:disabled) { background: rgba(0,0,0,0.85); }
+.admin-login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.admin-login-btn:active:not(:disabled) { transform: scale(0.98); }
+
+.spinning { animation: spin 1s linear infinite; font-size: 20px; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.admin-login-right {
+  background: var(--color-primary-container);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
 }
 
-.submit-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+.admin-login-visual { max-width: 400px; }
+
+.visual-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--color-primary-fixed);
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  line-height: 1.2;
 }
 
-.loader {
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top: 3px solid white;
-  width: 20px;
-  height: 20px;
-  animation: spin 1s linear infinite;
+.visual-sub {
+  font-size: var(--font-size-body-lg);
+  color: rgba(188, 198, 224, 0.7);
+  line-height: 1.6;
+  margin-bottom: 40px;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.visual-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.visual-features li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: var(--font-size-body-md);
+  color: var(--color-on-primary-container);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .admin-login-page { grid-template-columns: 1fr; }
+  .admin-login-right { display: none; }
+  .admin-login-left { padding: 32px var(--spacing-margin-mobile); }
 }
