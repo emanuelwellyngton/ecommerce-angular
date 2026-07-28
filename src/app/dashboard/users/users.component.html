@@ -1,0 +1,82 @@
+<div class="users-page">
+  <header class="page-header">
+    <div>
+      <h2 class="page-title">Gestão de Usuários</h2>
+      <p class="page-subtitle">Gerencie os clientes e administradores.</p>
+    </div>
+    <a routerLink="/dashboard/users/new" class="btn btn-primary">
+      <span class="material-symbols-outlined">add</span>
+      Novo Usuário
+    </a>
+  </header>
+
+  <!-- Search -->
+  <div class="search-wrapper">
+    <span class="material-symbols-outlined search-icon">search</span>
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Buscar por nome, e-mail ou username..."
+      [(ngModel)]="searchQuery"
+      (input)="applyFilter()"
+    />
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <div *ngIf="loading" class="loading-state">
+      <div *ngFor="let i of [1,2,3,4,5]" class="skeleton" style="height: 64px; margin-bottom: 4px;"></div>
+    </div>
+
+    <div *ngIf="!loading && filteredUsers.length === 0" class="empty-state">
+      <span class="material-symbols-outlined">group</span>
+      <p>Nenhum usuário encontrado</p>
+    </div>
+
+    <div *ngIf="!loading && filteredUsers.length > 0" class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuário</th>
+            <th>E-mail</th>
+            <th>Perfil</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers">
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar">{{ (user.firstName || user.username)[0].toUpperCase() }}</div>
+                <div>
+                  <div class="user-name">{{ getDisplayName(user) }}</div>
+                  <div class="user-username">@{{ user.username }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="user-email">{{ user.email }}</td>
+            <td>
+              <span class="badge" [ngClass]="getRoleBadge(user.roles) === 'Admin' ? 'badge-success' : 'badge-neutral'">
+                {{ getRoleBadge(user.roles) }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="user.active ? 'badge-success' : 'badge-error'">
+                {{ user.active ? 'Ativo' : 'Inativo' }}
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <a [routerLink]="['/dashboard/users/edit', user.id]" class="btn btn-outline btn-sm">
+                  <span class="material-symbols-outlined" style="font-size:16px">edit</span>
+                  Editar
+                </a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

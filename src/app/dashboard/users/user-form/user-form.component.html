@@ -1,0 +1,83 @@
+<div class="user-form-page">
+  <header class="page-header">
+    <a routerLink="/dashboard/users" class="back-link">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Voltar
+    </a>
+    <h2 class="page-title">{{ isEditMode ? 'Editar Usuário' : 'Novo Usuário' }}</h2>
+  </header>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="skeleton" style="height: 400px;"></div>
+  </div>
+
+  <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()" class="user-form">
+    <div class="form-card">
+      <h3 class="form-section-title">Informações da Conta</h3>
+
+      <div *ngIf="!isEditMode" class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Username *</label>
+          <input type="text" class="form-input" formControlName="username" placeholder="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-mail *</label>
+          <input type="email" class="form-input" formControlName="email" placeholder="email@exemplo.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Senha *</label>
+          <input type="password" class="form-input" formControlName="password" placeholder="Mínimo 6 caracteres">
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Nome</label>
+          <input type="text" class="form-input" formControlName="firstName" placeholder="Nome">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sobrenome</label>
+          <input type="text" class="form-input" formControlName="lastName" placeholder="Sobrenome">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefone</label>
+          <input type="tel" class="form-input" formControlName="phone" placeholder="(11) 99999-9999">
+        </div>
+        <div class="form-group">
+          <label class="form-label">CPF/Documento</label>
+          <input type="text" class="form-input" formControlName="document" placeholder="000.000.000-00">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Perfil</label>
+          <select class="form-input" formControlName="roles">
+            <option [ngValue]="['ROLE_USER']">Cliente</option>
+            <option [ngValue]="['ROLE_ADMIN']">Administrador</option>
+          </select>
+        </div>
+        <div class="form-group active-toggle">
+          <label class="form-label">Status</label>
+          <label class="toggle">
+            <input type="checkbox" formControlName="active">
+            <span class="toggle-text">{{ form.get('active')?.value ? 'Ativo' : 'Inativo' }}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      <span class="material-symbols-outlined">error</span>
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-actions">
+      <a routerLink="/dashboard/users" class="btn btn-outline">Cancelar</a>
+      <button type="submit" class="btn btn-primary" [disabled]="submitting">
+        <span *ngIf="submitting" class="material-symbols-outlined spinning">progress_activity</span>
+        {{ isEditMode ? 'Salvar Alterações' : 'Criar Usuário' }}
+      </button>
+    </div>
+  </form>
+</div>
