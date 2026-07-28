@@ -1,0 +1,76 @@
+<div class="orders-page">
+  <header class="page-header">
+    <div>
+      <h2 class="page-title">Gestão de Pedidos</h2>
+      <p class="page-subtitle">Gerencie e atualize o status dos pedidos.</p>
+    </div>
+  </header>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-wrapper">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Buscar por número do pedido..."
+        [(ngModel)]="searchQuery"
+        (input)="applyFilter()"
+      />
+    </div>
+    <select class="status-filter" [(ngModel)]="selectedStatus" (change)="applyFilter()">
+      <option value="">Todos os status</option>
+      <option *ngFor="let s of statuses" [value]="s">{{ getStatusLabel(s) }}</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <div *ngIf="loading" class="loading-state">
+      <div *ngFor="let i of [1,2,3,4,5]" class="skeleton" style="height: 56px; margin-bottom: 4px;"></div>
+    </div>
+
+    <div *ngIf="!loading && filteredOrders.length === 0" class="empty-state">
+      <span class="material-symbols-outlined">shopping_bag</span>
+      <p>Nenhum pedido encontrado</p>
+    </div>
+
+    <div *ngIf="!loading && filteredOrders.length > 0" class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Pedido</th>
+            <th>Data</th>
+            <th>Itens</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of filteredOrders">
+            <td>
+              <span class="order-id">#{{ order.id }}</span>
+            </td>
+            <td>{{ formatDate(order.createdAt) }}</td>
+            <td>{{ order.items?.length || 0 }} itens</td>
+            <td class="order-total">{{ order.totalAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+            <td>
+              <span class="badge" [ngClass]="getStatusClass(order.status)">{{ getStatusLabel(order.status) }}</span>
+            </td>
+            <td>
+              <select 
+                class="status-select" 
+                [value]="order.status"
+                [disabled]="updatingOrderId === order.id"
+                (change)="updateStatus(order, $any($event.target).value)"
+              >
+                <option *ngFor="let s of statuses" [value]="s">{{ getStatusLabel(s) }}</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
