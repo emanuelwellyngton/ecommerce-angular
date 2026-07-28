@@ -1,37 +1,60 @@
-<footer class="footer">
-    <div class="container">
-        <div class="footer-content">
-            <div class="footer-brand">
-                <h3>Luxe<span>Market</span></h3>
-                <p>Elevando seu estilo de vida com produtos premium selecionados.</p>
-            </div>
-
-            <div class="footer-links">
-                <div class="link-group">
-                    <h4>Loja</h4>
-                    <a href="#">Novidades</a>
-                    <a href="#">Mais Vendidos</a>
-                    <a href="#">Categorias</a>
-                </div>
-
-                <div class="link-group">
-                    <h4>Empresa</h4>
-                    <a href="#">Sobre Nós</a>
-                    <a href="#">Carreiras</a>
-                    <a href="#">Showrooms</a>
-                </div>
-
-                <div class="link-group">
-                    <h4>Suporte</h4>
-                    <a href="#">Contato</a>
-                    <a href="#">FAQ</a>
-                    <a href="#">Entrega</a>
-                </div>
-            </div>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <!-- Top Section -->
+    <div class="footer-top">
+      <!-- Brand Column -->
+      <div class="footer-brand">
+        <a class="footer-logo" routerLink="/site">LUXE</a>
+        <p class="footer-tagline">Minimalismo Redefinido. Design limpo, materiais premium e silhuetas que transcendem as estações.</p>
+        <div class="social-links">
+          <a href="#" class="social-btn" aria-label="Instagram">
+            <span class="material-symbols-outlined">photo_camera</span>
+          </a>
+          <a href="#" class="social-btn" aria-label="Facebook">
+            <span class="material-symbols-outlined">thumb_up</span>
+          </a>
+          <a href="#" class="social-btn" aria-label="Twitter">
+            <span class="material-symbols-outlined">alternate_email</span>
+          </a>
         </div>
+      </div>
 
-        <div class="footer-bottom">
-            <p>&copy; 2024 LuxeMarket. Todos os direitos reservados.</p>
-        </div>
+      <!-- Nav Columns -->
+      <div class="footer-nav-group">
+        <h3 class="footer-nav-title">Loja</h3>
+        <ul class="footer-nav">
+          <li><a routerLink="/site/products" class="footer-nav-link">Coleções</a></li>
+          <li><a routerLink="/site/products" class="footer-nav-link">Novidades</a></li>
+          <li><a routerLink="/site/products" class="footer-nav-link">Ofertas</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav-group">
+        <h3 class="footer-nav-title">Empresa</h3>
+        <ul class="footer-nav">
+          <li><a routerLink="/site/about" class="footer-nav-link">Sobre Nós</a></li>
+          <li><a routerLink="/site/faq" class="footer-nav-link">FAQ</a></li>
+          <li><a href="#" class="footer-nav-link">Contato</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav-group">
+        <h3 class="footer-nav-title">Conta</h3>
+        <ul class="footer-nav">
+          <li><a routerLink="/site/account" class="footer-nav-link">Minha Conta</a></li>
+          <li><a routerLink="/site/cart" class="footer-nav-link">Carrinho</a></li>
+          <li><a routerLink="/site/account/orders" class="footer-nav-link">Meus Pedidos</a></li>
+        </ul>
+      </div>
     </div>
+
+    <!-- Bottom Section -->
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; {{ currentYear }} LUXE. Todos os direitos reservados.</p>
+      <div class="footer-legal">
+        <a href="#" class="footer-legal-link">Privacidade</a>
+        <a href="#" class="footer-legal-link">Termos</a>
+      </div>
+    </div>
+  </div>
 </footer>
