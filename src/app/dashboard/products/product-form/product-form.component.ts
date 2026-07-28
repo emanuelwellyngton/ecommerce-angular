@@ -1,138 +1,69 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product';
 import { Product } from '../../../core/models/product.model';
 
 @Component({
-    selector: 'app-product-form',
-    standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterModule],
-    templateUrl: './product-form.component.html',
-    styles: [`
-    .form-container {
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #374151;
-    }
-    input, textarea, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 1rem;
-    }
-    textarea {
-      height: 100px;
-      resize: vertical;
-    }
-    .form-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 15px;
-      margin-top: 30px;
-    }
-    .btn-secondary {
-      background-color: #e5e7eb;
-      color: #374151;
-      padding: 10px 20px;
-      border-radius: 6px;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-    }
-    .btn-primary {
-      background-color: #3b82f6;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-    }
-    .btn-primary:disabled {
-      background-color: #93c5fd;
-      cursor: not-allowed;
-    }
-    .error-msg {
-      color: #ef4444;
-      font-size: 0.875rem;
-      margin-top: 5px;
-    }
-  `]
+  selector: 'app-product-form',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  templateUrl: './product-form.component.html',
+  styleUrls: ['./product-form.component.css']
 })
 export class ProductFormComponent implements OnInit {
-    productForm: FormGroup;
-    isEditMode = false;
-    productId: number | null = null;
-    loading = false;
+  private fb = inject(FormBuilder);
+  private productService = inject(ProductService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
-    constructor(
-        private fb: FormBuilder,
-        private productService: ProductService,
-        private route: ActivatedRoute,
-        private router: Router
-    ) {
-        this.productForm = this.fb.group({
-            name: ['', Validators.required],
-            price: [0, [Validators.required, Validators.min(0)]],
-            description: ['', Validators.required],
-            imageUrl: ['', Validators.required],
-            category: ['', Validators.required],
-            isNew: [false]
-        });
+  form!: FormGroup;
+  loading = false;
+  submitting = false;
+  isEditMode = false;
+  productId: number | null = null;
+  errorMessage = '';
+  successMessage = '';
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.isEditMode = !!id;
+    this.productId = id ? +id : null;
+    this.form = this.fb.group({
+      name: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+      price: [null, [Validators.required, Validators.min(0.01)]],
+      discountPrice: [null],
+      stock: [0, [Validators.required, Validators.min(0)]],
+      imageUrl: [''],
+      category: [''],
+      active: [true],
+      isNew: [false]
+    });
+    if (this.isEditMode && this.productId) {
+      this.loading = true;
+      this.productService.getProductById(this.productId).subscribe({
+        next: (product) => {
+          if (product) {
+            this.form.patchValue({ name: product.name, description: product.description, price: product.price, discountPrice: product.discountPrice, stock: product.stock, imageUrl: product.imageUrl, category: product.category, active: product.active !== false, isNew: product['new'] || false });
+          }
+          this.loading = false;
+        },
+        error: () => { this.loading = false; }
+      });
     }
+  }
 
-    ngOnInit(): void {
-        this.route.params.subscribe(params => {
-            if (params['id']) {
-                this.isEditMode = true;
-                this.productId = +params['id'];
-                this.loadProduct(this.productId);
-            }
-        });
-    }
-
-    loadProduct(id: number): void {
-        this.productService.getProductById(id).subscribe(product => {
-            if (product) {
-                this.productForm.patchValue(product);
-            }
-        });
-    }
-
-    onSubmit(): void {
-        if (this.productForm.invalid) return;
-
-        this.loading = true;
-        const productData = this.productForm.value;
-
-        if (this.isEditMode && this.productId) {
-            this.productService.updateProduct(this.productId, productData).subscribe({
-                next: () => {
-                    this.router.navigate(['/dashboard/products']);
-                },
-                error: () => this.loading = false
-            });
-        } else {
-            this.productService.createProduct(productData).subscribe({
-                next: () => {
-                    this.router.navigate(['/dashboard/products']);
-                },
-                error: () => this.loading = false
-            });
-        }
-    }
+  onSubmit(): void {
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    this.submitting = true;
+    this.errorMessage = '';
+    const value = this.form.value;
+    const obs = this.isEditMode && this.productId ? this.productService.updateProduct(this.productId, value) : this.productService.createProduct(value as Product);
+    obs.subscribe({
+      next: () => { this.successMessage = this.isEditMode ? 'Produto atualizado!' : 'Produto criado!'; setTimeout(() => this.router.navigate(['/dashboard/products']), 1500); this.submitting = false; },
+      error: (err) => { this.errorMessage = err.error?.message || 'Erro ao salvar produto.'; this.submitting = false; }
+    });
+  }
 }
