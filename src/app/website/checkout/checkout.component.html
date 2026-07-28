@@ -1,0 +1,111 @@
+<main class="checkout-page">
+  <div class="checkout-container">
+    <h1 class="checkout-title">Finalizar Compra</h1>
+
+    <!-- Steps Indicator -->
+    <div class="steps-bar" *ngIf="step !== 'confirmed' && step !== 'denied'">
+      <div class="step" [class.active]="step === 'delivery'" [class.done]="step !== 'delivery'">
+        <span class="step-num">1</span> Entrega
+      </div>
+      <div class="step-divider"></div>
+      <div class="step" [class.active]="step === 'payment'" [class.done]="step === 'review'">
+        <span class="step-num">2</span> Pagamento
+      </div>
+      <div class="step-divider"></div>
+      <div class="step" [class.active]="step === 'review'">
+        <span class="step-num">3</span> Revisão
+      </div>
+    </div>
+
+    <!-- Delivery Step -->
+    <div *ngIf="step === 'delivery'" class="step-content">
+      <h2 class="step-title">Selecionar Endereço de Entrega</h2>
+      <div *ngIf="addresses.length === 0" class="empty-state">
+        <span class="material-symbols-outlined">location_on</span>
+        <p>Nenhum endereço cadastrado.</p>
+        <a routerLink="/site/account" class="btn btn-primary">Adicionar Endereço</a>
+      </div>
+      <div *ngFor="let addr of addresses" class="address-option" 
+        [class.selected]="selectedAddressId === addr.id"
+        (click)="selectedAddressId = addr.id">
+        <div class="radio-circle"></div>
+        <div>
+          <p>{{ addr.street }}, {{ addr.number }}</p>
+          <p class="addr-sub">{{ addr.city }}/{{ addr.state }} - {{ addr.zipCode }}</p>
+        </div>
+        <span *ngIf="addr.isDefault" class="badge badge-neutral">Padrão</span>
+      </div>
+      <div class="step-actions">
+        <a routerLink="/site/cart" class="btn btn-outline">Voltar ao Carrinho</a>
+        <button class="btn btn-primary" (click)="nextStep()" [disabled]="!selectedAddressId">Continuar</button>
+      </div>
+    </div>
+
+    <!-- Payment Step -->
+    <div *ngIf="step === 'payment'" class="step-content">
+      <h2 class="step-title">Selecionar Forma de Pagamento</h2>
+      <div *ngIf="paymentMethods.length === 0" class="empty-state">
+        <span class="material-symbols-outlined">credit_card</span>
+        <p>Nenhum método de pagamento cadastrado.</p>
+        <a routerLink="/site/account" class="btn btn-primary">Adicionar Pagamento</a>
+      </div>
+      <div *ngFor="let pm of paymentMethods" class="payment-option"
+        [class.selected]="selectedPaymentId === pm.id"
+        (click)="selectedPaymentId = pm.id">
+        <div class="radio-circle"></div>
+        <span class="material-symbols-outlined">{{ pm.type === 'PIX' ? 'qr_code' : 'credit_card' }}</span>
+        <div>
+          <p class="pm-type">{{ getPaymentLabel(pm.type) }}</p>
+          <p *ngIf="pm.cardLast4" class="pm-sub">**** {{ pm.cardLast4 }}</p>
+        </div>
+      </div>
+      <div class="step-actions">
+        <button class="btn btn-outline" (click)="step = 'delivery'">Voltar</button>
+        <button class="btn btn-primary" (click)="nextStep()" [disabled]="!selectedPaymentId">Continuar</button>
+      </div>
+    </div>
+
+    <!-- Review Step -->
+    <div *ngIf="step === 'review'" class="step-content">
+      <h2 class="step-title">Revisar Pedido</h2>
+      <div class="review-section">
+        <h3>Itens do Carrinho</h3>
+        <div *ngFor="let item of (cartItems$ | async)" class="review-item">
+          <span>{{ item.name }}</span>
+          <span>{{ item.quantity }}x</span>
+          <span>{{ (item.price * item.quantity) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+        </div>
+        <div class="review-total">
+          <strong>Total: {{ (cartTotal$ | async) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+        </div>
+      </div>
+      <div class="step-actions">
+        <button class="btn btn-outline" (click)="step = 'payment'">Voltar</button>
+        <button class="btn btn-primary" (click)="placeOrder()" [disabled]="loading">
+          <span *ngIf="loading" class="material-symbols-outlined spinning">progress_activity</span>
+          <span *ngIf="!loading">Confirmar Pedido</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Confirmed State -->
+    <div *ngIf="step === 'confirmed'" class="result-state success">
+      <div class="result-icon success">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <h2>Pedido Confirmado!</h2>
+      <p>Seu pedido #{{ orderId }} foi realizado com sucesso. Você receberá uma confirmação por e-mail.</p>
+      <a routerLink="/site/account" class="btn btn-primary">Ver Meus Pedidos</a>
+    </div>
+
+    <!-- Denied State -->
+    <div *ngIf="step === 'denied'" class="result-state error">
+      <div class="result-icon error">
+        <span class="material-symbols-outlined">cancel</span>
+      </div>
+      <h2>Pagamento Negado</h2>
+      <p>Não foi possível processar seu pagamento. Verifique seus dados e tente novamente.</p>
+      <button class="btn btn-primary" (click)="step = 'payment'">Tentar Novamente</button>
+    </div>
+  </div>
+</main>
