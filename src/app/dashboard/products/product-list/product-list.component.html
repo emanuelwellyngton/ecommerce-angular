@@ -1,36 +1,55 @@
-<div class="page-header">
-    <h2>Products</h2>
-    <a routerLink="/dashboard/products/new" class="btn-primary">Add Product</a>
-</div>
-
-<table class="product-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Category</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let product of products">
-            <td>{{ product.id }}</td>
+<div class="products-page">
+  <header class="page-header">
+    <div>
+      <h2 class="page-title">Gestão de Produtos</h2>
+      <p class="page-subtitle">Gerencie o catálogo de produtos da loja.</p>
+    </div>
+    <a routerLink="/dashboard/products/new" class="btn btn-primary">
+      <span class="material-symbols-outlined">add</span>
+      Novo Produto
+    </a>
+  </header>
+  <div class="search-wrapper">
+    <span class="material-symbols-outlined search-icon">search</span>
+    <input type="text" class="search-input" placeholder="Buscar produtos..." [(ngModel)]="searchQuery" (input)="applyFilter()" />
+  </div>
+  <div class="table-card">
+    <div *ngIf="loading" class="loading-state">
+      <div *ngFor="let i of [1,2,3,4]" class="skeleton" style="height: 72px; margin-bottom: 4px;"></div>
+    </div>
+    <div *ngIf="!loading && filteredProducts.length === 0" class="empty-state">
+      <span class="material-symbols-outlined">inventory_2</span>
+      <p>Nenhum produto encontrado</p>
+      <a routerLink="/dashboard/products/new" class="btn btn-primary">Adicionar Produto</a>
+    </div>
+    <div *ngIf="!loading && filteredProducts.length > 0" class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Status</th><th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of filteredProducts">
             <td>
-                <img [src]="product.imageUrl" alt="{{ product.name }}" width="40" height="40"
-                    style="object-fit: cover; border-radius: 4px;">
+              <div class="product-cell">
+                <div class="product-thumb" [style.background-image]="product.imageUrl ? 'url(' + product.imageUrl + ')' : 'none'"></div>
+                <span class="product-name">{{ product.name }}</span>
+              </div>
             </td>
-            <td>{{ product.name }}</td>
-            <td>{{ product.price | currency }}</td>
-            <td>{{ product.category }}</td>
-            <td class="actions">
-                <a [routerLink]="['/dashboard/products/edit', product.id]" class="btn-sm btn-edit">Edit</a>
-                <button (click)="deleteProduct(product.id)" class="btn-sm btn-delete">Delete</button>
+            <td class="product-category">{{ product.category || '-' }}</td>
+            <td class="product-price">{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+            <td><span [class]="'stock ' + (product.stock <= 5 ? 'low' : '')">{{ product.stock }}</span></td>
+            <td><span class="badge" [ngClass]="product.active ? 'badge-success' : 'badge-error'">{{ product.active ? 'Ativo' : 'Inativo' }}</span></td>
+            <td>
+              <div class="actions">
+                <a [routerLink]="['/dashboard/products/edit', product.id]" class="btn btn-outline btn-sm"><span class="material-symbols-outlined" style="font-size:16px">edit</span></a>
+                <button class="btn btn-sm danger-btn" (click)="deleteProduct(product.id)" [disabled]="deletingId === product.id"><span class="material-symbols-outlined" style="font-size:16px">delete</span></button>
+              </div>
             </td>
-        </tr>
-        <tr *ngIf="products.length === 0">
-            <td colspan="6" style="text-align: center; padding: 20px;">No products found.</td>
-        </tr>
-    </tbody>
-</table>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
