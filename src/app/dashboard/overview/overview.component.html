@@ -1,0 +1,67 @@
+<div class="overview-page">
+  <header class="page-header">
+    <div>
+      <h2 class="page-title">Visão Geral</h2>
+      <p class="page-subtitle">Bem-vindo de volta. Aqui está o resumo das suas métricas.</p>
+    </div>
+  </header>
+
+  <!-- Metrics Cards -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-top">
+        <span class="metric-label">Faturamento Total</span>
+        <span class="material-symbols-outlined metric-icon success">trending_up</span>
+      </div>
+      <div class="metric-value">{{ totalRevenue | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+      <div class="metric-sub success">Todos os pedidos pagos</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-top">
+        <span class="metric-label">Pedidos Ativos</span>
+        <span class="material-symbols-outlined metric-icon muted">local_shipping</span>
+      </div>
+      <div class="metric-value">{{ pendingOrders }}</div>
+      <div class="metric-sub muted">Aguardando processamento</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-top">
+        <span class="metric-label">Total de Pedidos</span>
+        <span class="material-symbols-outlined metric-icon muted">shopping_bag</span>
+      </div>
+      <div class="metric-value">{{ totalOrders }}</div>
+      <div class="metric-sub muted">Desde o início</div>
+    </div>
+  </div>
+
+  <!-- Recent Orders -->
+  <div class="section-card">
+    <div class="section-header">
+      <h3 class="section-title">Últimos Pedidos</h3>
+      <a routerLink="/dashboard/orders" class="view-all-link">Ver todos</a>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="skeleton" style="height: 48px; margin-bottom: 8px;"></div>
+      <div class="skeleton" style="height: 48px; margin-bottom: 8px;"></div>
+      <div class="skeleton" style="height: 48px;"></div>
+    </div>
+
+    <div *ngIf="!loading && orders.length === 0" class="empty-state">
+      <span class="material-symbols-outlined">shopping_bag</span>
+      <p>Nenhum pedido encontrado</p>
+    </div>
+
+    <div *ngIf="!loading && orders.length > 0" class="orders-list">
+      <div *ngFor="let order of orders" class="order-row">
+        <div class="order-info">
+          <span class="order-id">#{{ order.id }}</span>
+        </div>
+        <div class="order-total">{{ order.totalAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+        <span class="badge" [ngClass]="getStatusClass(order.status)">{{ getStatusLabel(order.status) }}</span>
+      </div>
+    </div>
+  </div>
+</div>
