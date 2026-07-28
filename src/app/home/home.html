@@ -1,41 +1,148 @@
-<div class="hero">
-    <div class="container hero-container">
-        <div class="hero-content">
-            <span class="pill-label">Nova Coleção 2024</span>
-            <h1>Redefina Seu <br><span>Estilo de Vida</span></h1>
-            <p>Descubra nossa coleção curada de produtos premium projetados para elevar sua experiência diária.
-                Qualidade encontra estética.</p>
-            <div class="hero-actions">
-                <a routerLink="/products" class="btn btn-accent">Comprar Agora</a>
-                <a href="#" class="btn-outline">Ver Catálogo</a>
-            </div>
+<main class="home-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <span class="hero-badge">Coleção Outono 2024</span>
+        <h1 class="hero-title">Minimalismo<br><span class="hero-accent">Redefinido.</span></h1>
+        <p class="hero-desc">Design limpo, materiais premium e silhuetas que transcendem as estações. Cada peça é uma declaração de estilo atemporal.</p>
+        <div class="hero-actions">
+          <a routerLink="/site/products" class="btn btn-primary btn-lg">Explorar Coleção</a>
+          <a routerLink="/site/about" class="btn btn-outline btn-lg">Nossa História</a>
         </div>
-        <div class="hero-image">
-            <div class="image-placeholder">
-                <!-- Placeholder for hero image -->
-            </div>
-            <div class="floating-card">
-                <div class="card-icon">✨</div>
-                <div class="card-text">
-                    <span class="card-title">Qualidade Premium</span>
-                    <span class="card-desc">Itens selecionados</span>
-                </div>
-            </div>
+        <div class="hero-stats">
+          <div class="stat"><span class="stat-num">500+</span><span class="stat-label">Produtos</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><span class="stat-num">10k+</span><span class="stat-label">Clientes</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><span class="stat-num">4.9</span><span class="stat-label">Avaliação</span></div>
         </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-image-wrap">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDb9lsCrtB-xctjMJwFkZ1GnaK9SDfrntCDbJV789CavqjMKXH_WbfKUG-H73JXhntkeOvqZbxWHJzN9TP5QJk1JygmMcxF77FErrVfsWi0zlFsUeRcJPDPC9pyopz0coS0d2we6-LGAYKWZux_2UBcaKQ0nL4PZDc_aK0DWptCVOczgH7Ft9WWxIjSOzo6Qp8fU6QTUlPfe8areCverdW_UPozxrzuvrGeQG-O7EVpGmaxm8997tkUN5JuoOz6ZLiZKMIxhwR8NKI" alt="LUXE Hero" class="hero-img" />
+        </div>
+        <div class="float-badge float-1">
+          <span class="material-symbols-outlined">star</span>
+          <span>Top Rated</span>
+        </div>
+        <div class="float-badge float-2">
+          <span class="material-symbols-outlined">local_shipping</span>
+          <span>Frete Grátis</span>
+        </div>
+      </div>
     </div>
-</div>
+  </section>
 
-<section class="features container">
-    <div class="feature-item">
-        <h3>Design</h3>
-        <p>Feito com atenção aos detalhes e estética moderna.</p>
+  <!-- Categories -->
+  <section class="categories-section">
+    <div class="section-container">
+      <div class="section-header">
+        <div>
+          <span class="section-label">Categorias</span>
+          <h2 class="section-title">Explore por Categoria</h2>
+        </div>
+      </div>
+      <div class="categories-grid">
+        <a *ngFor="let cat of categories" routerLink="/site/products" class="category-card" [style.background]="cat.bg">
+          <div class="cat-icon">
+            <span class="material-symbols-outlined">{{ cat.icon }}</span>
+          </div>
+          <div>
+            <h3 class="cat-name">{{ cat.name }}</h3>
+            <p class="cat-desc">{{ cat.desc }}</p>
+          </div>
+          <span class="material-symbols-outlined cat-arrow">arrow_forward</span>
+        </a>
+      </div>
     </div>
-    <div class="feature-item">
-        <h3>Qualidade</h3>
-        <p>Materiais premium garantindo durabilidade e conforto.</p>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="products-section">
+    <div class="section-container">
+      <div class="section-header">
+        <div>
+          <span class="section-label">Destaques</span>
+          <h2 class="section-title">Produtos em Destaque</h2>
+        </div>
+        <a routerLink="/site/products" class="view-all-link">Ver tudo <span class="material-symbols-outlined">arrow_forward</span></a>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="products-grid">
+        <div *ngFor="let i of [1,2,3,4]" class="product-skeleton">
+          <div class="skeleton" style="height:280px; border-radius:16px;"></div>
+          <div class="skeleton" style="height:18px; margin-top:12px; border-radius:8px;"></div>
+          <div class="skeleton" style="height:16px; margin-top:8px; width:60%; border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <!-- Products -->
+      <div *ngIf="!loading" class="products-grid">
+        <div *ngFor="let product of featuredProducts" class="product-card">
+          <div class="product-img-wrap" [routerLink]="['/site/products', product.id]">
+            <img [src]="product.imageUrl || 'https://via.placeholder.com/400x500?text=LUXE'" [alt]="product.name" class="product-img" />
+            <div class="product-overlay">
+              <button class="overlay-btn" (click)="addToCart(product, $event)">
+                <span class="material-symbols-outlined">shopping_cart</span>
+              </button>
+            </div>
+          </div>
+          <div class="product-info">
+            <a [routerLink]="['/site/products', product.id]" class="product-name">{{ product.name }}</a>
+            <p class="product-category">{{ product.category }}</p>
+            <div class="product-price">
+              <span *ngIf="product.discountPrice" class="price-old">{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+              <span class="price-main">{{ (product.discountPrice || product.price) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="feature-item">
-        <h3>Sustentabilidade</h3>
-        <p>Processos ecológicos e embalagens recicláveis.</p>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="newsletter-section">
+    <div class="section-container">
+      <div class="newsletter-grid">
+        <div class="newsletter-content">
+          <span class="section-label light">Newsletter</span>
+          <h2 class="newsletter-title">Fique por dentro das novidades</h2>
+          <p class="newsletter-desc">Receba ofertas exclusivas e as últimas tendências diretamente no seu e-mail.</p>
+        </div>
+        <form class="newsletter-form" (submit)="$event.preventDefault()">
+          <div class="nl-input-wrap">
+            <span class="material-symbols-outlined nl-icon">mail</span>
+            <input type="email" class="nl-input" placeholder="seu@email.com" />
+          </div>
+          <button type="submit" class="btn btn-primary">Assinar</button>
+        </form>
+      </div>
     </div>
-</section>
+  </section>
+
+  <!-- FAQ Preview -->
+  <section class="faq-section" *ngIf="faqs.length > 0">
+    <div class="section-container">
+      <div class="section-header">
+        <div>
+          <span class="section-label">Suporte</span>
+          <h2 class="section-title">Perguntas Frequentes</h2>
+        </div>
+        <a routerLink="/site/faq" class="view-all-link">Ver todas <span class="material-symbols-outlined">arrow_forward</span></a>
+      </div>
+      <div class="faq-list">
+        <div *ngFor="let faq of faqs" class="faq-item" [class.open]="openFaqId === faq.id">
+          <button class="faq-question" (click)="toggleFaq(faq.id)">
+            <span>{{ faq.question }}</span>
+            <span class="material-symbols-outlined">{{ openFaqId === faq.id ? 'expand_less' : 'expand_more' }}</span>
+          </button>
+          <div class="faq-answer" [class.visible]="openFaqId === faq.id">
+            <p>{{ faq.answer }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
