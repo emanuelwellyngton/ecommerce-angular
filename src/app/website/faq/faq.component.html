@@ -1,0 +1,48 @@
+<main class="faq-page">
+  <!-- Hero -->
+  <section class="faq-hero">
+    <div class="faq-hero-inner">
+      <span class="hero-badge">Suporte</span>
+      <h1 class="faq-title">Perguntas Frequentes</h1>
+      <p class="faq-subtitle">Encontre respostas para as dúvidas mais comuns sobre nossos produtos e serviços.</p>
+
+      <!-- Search -->
+      <div class="faq-search">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input
+          type="text"
+          class="faq-search-input"
+          placeholder="Buscar perguntas..."
+          [(ngModel)]="searchQuery"
+          (input)="applyFilter()"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ List -->
+  <section class="faq-content">
+    <div class="faq-container">
+      <div *ngIf="loading" class="loading-state">
+        <div *ngFor="let i of [1,2,3,4,5]" class="skeleton" style="height: 64px; margin-bottom: 8px;"></div>
+      </div>
+
+      <div *ngIf="!loading && filteredFaqs.length === 0" class="empty-state">
+        <span class="material-symbols-outlined">search_off</span>
+        <p>Nenhuma pergunta encontrada para "{{ searchQuery }}"</p>
+      </div>
+
+      <div *ngIf="!loading && filteredFaqs.length > 0" class="faq-list">
+        <div *ngFor="let faq of filteredFaqs" class="faq-item" [class.open]="openId === faq.id">
+          <button class="faq-question" (click)="toggleFaq(faq.id)">
+            <span>{{ faq.question }}</span>
+            <span class="material-symbols-outlined faq-chevron">{{ openId === faq.id ? 'expand_less' : 'expand_more' }}</span>
+          </button>
+          <div class="faq-answer" [class.visible]="openId === faq.id">
+            <p>{{ faq.answer }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
