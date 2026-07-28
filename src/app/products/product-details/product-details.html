@@ -1,30 +1,158 @@
-<div class="container product-details-page" *ngIf="product$ | async as product; else loading">
-    <div class="product-grid">
-        <div class="product-image-container">
-            <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
+<main class="details-page">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="details-loading">
+    <div class="details-container">
+      <div class="loading-grid">
+        <div class="skeleton" style="aspect-ratio: 3/4; border-radius: 24px;"></div>
+        <div class="loading-info">
+          <div class="skeleton" style="height: 20px; width: 30%; border-radius: 6px;"></div>
+          <div class="skeleton" style="height: 40px; width: 80%; border-radius: 8px;"></div>
+          <div class="skeleton" style="height: 32px; width: 40%; border-radius: 8px;"></div>
+          <div class="skeleton" style="height: 120px; border-radius: 12px;"></div>
+          <div class="skeleton" style="height: 56px; border-radius: 12px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Not Found State -->
+  <div *ngIf="!loading && !product" class="not-found-state">
+    <div class="details-container">
+      <div class="empty-card">
+        <span class="material-symbols-outlined icon-empty">search_off</span>
+        <h2>Produto Não Encontrado</h2>
+        <p>O produto solicitado não está mais disponível ou não existe.</p>
+        <a routerLink="/site/products" class="btn btn-primary">Voltar para a Loja</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Product Details View -->
+  <div *ngIf="!loading && product" class="details-content">
+    <div class="details-container">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+        <a routerLink="/site" class="bc-link">Home</a>
+        <span class="material-symbols-outlined bc-sep">chevron_right</span>
+        <a routerLink="/site/products" class="bc-link">Coleções</a>
+        <span class="material-symbols-outlined bc-sep">chevron_right</span>
+        <span class="bc-current">{{ product.name }}</span>
+      </nav>
+
+      <div class="details-grid">
+        <!-- Media / Gallery Section -->
+        <div class="media-column">
+          <!-- Main Display Image -->
+          <div class="main-display">
+            <img 
+              [src]="productImages[selectedImageIndex] || product.imageUrl || 'https://via.placeholder.com/600x800?text=LUXE'" 
+              [alt]="product.name" 
+              class="display-img" 
+            />
+            <div class="product-badges">
+              <span *ngIf="product['new']" class="badge badge-new">Novo</span>
+              <span *ngIf="product.discountPrice" class="badge badge-sale">Promoção</span>
+            </div>
+          </div>
+
+          <!-- Thumbnails Row (if multiple images exist) -->
+          <div *ngIf="productImages.length > 1" class="thumbnails-row">
+            <button 
+              *ngFor="let imgUrl of productImages; let i = index" 
+              class="thumb-btn" 
+              [class.active]="selectedImageIndex === i"
+              (click)="selectImage(i)"
+            >
+              <img [src]="imgUrl" [alt]="product.name" class="thumb-img" />
+            </button>
+          </div>
         </div>
 
-        <div class="product-info">
-            <span class="product-category">{{ product.category }}</span>
-            <h1 class="product-name">{{ product.name }}</h1>
-            <div class="product-price">{{ product.price | currency }}</div>
+        <!-- Details & Purchasing Info Section -->
+        <div class="info-column">
+          <span class="product-category-tag">{{ product.category }}</span>
+          <h1 class="product-title">{{ product.name }}</h1>
 
-            <p class="product-description">{{ product.description }}</p>
+          <!-- Price Row -->
+          <div class="price-box">
+            <span *ngIf="product.discountPrice" class="price-original">
+              {{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </span>
+            <span class="price-current">
+              {{ (product.discountPrice || product.price) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </span>
+            <span *ngIf="product.discountPrice" class="discount-pill">
+              -{{ (((product.price - product.discountPrice) / product.price) * 100) | number:'1.0-0' }}%
+            </span>
+          </div>
 
-            <div class="product-actions">
-                <!-- Placeholder for future functionality -->
-                <button class="btn btn-primary" (click)="addToCart(product)">Add to Cart</button>
+          <!-- Description -->
+          <div class="description-box">
+            <p class="description-text">{{ product.description }}</p>
+          </div>
+
+          <!-- Stock Availability Status -->
+          <div class="stock-status" [class.low-stock]="product.stock > 0 && product.stock <= 5" [class.out-stock]="product.stock === 0">
+            <span class="material-symbols-outlined">
+              {{ product.stock > 0 ? 'check_circle' : 'cancel' }}
+            </span>
+            <span *ngIf="product.stock > 5">Em estoque — envio imediato</span>
+            <span *ngIf="product.stock > 0 && product.stock <= 5">Restam apenas {{ product.stock }} unidades</span>
+            <span *ngIf="product.stock === 0">Produto temporariamente esgotado</span>
+          </div>
+
+          <!-- Quantity Control -->
+          <div *ngIf="product.stock > 0" class="quantity-group">
+            <label class="qty-label">Quantidade</label>
+            <div class="qty-picker">
+              <button class="qty-btn" (click)="adjustQuantity(-1)" [disabled]="quantity <= 1" aria-label="Diminuir">
+                <span class="material-symbols-outlined">remove</span>
+              </button>
+              <span class="qty-count">{{ quantity }}</span>
+              <button class="qty-btn" (click)="adjustQuantity(1)" [disabled]="quantity >= product.stock" aria-label="Aumentar">
+                <span class="material-symbols-outlined">add</span>
+              </button>
             </div>
+          </div>
 
-            <div class="product-meta">
-                <span *ngIf="product.isNew" class="badge">New Arrival</span>
+          <!-- Add to Cart Action -->
+          <div class="actions-group">
+            <button 
+              class="btn btn-primary btn-lg action-btn" 
+              [disabled]="product.stock === 0 || addedToCart"
+              (click)="addToCart()"
+            >
+              <span class="material-symbols-outlined">{{ addedToCart ? 'check' : 'shopping_bag' }}</span>
+              {{ addedToCart ? 'Adicionado à Sacola!' : (product.stock === 0 ? 'Esgotado' : 'Adicionar ao Carrinho') }}
+            </button>
+          </div>
+
+          <!-- Guarantee Highlights -->
+          <div class="highlights-grid">
+            <div class="highlight-item">
+              <span class="material-symbols-outlined hl-icon">local_shipping</span>
+              <div>
+                <h4 class="hl-title">Frete Grátis</h4>
+                <p class="hl-sub">Em compras para todo o Brasil</p>
+              </div>
             </div>
+            <div class="highlight-item">
+              <span class="material-symbols-outlined hl-icon">verified</span>
+              <div>
+                <h4 class="hl-title">Qualidade Garantida</h4>
+                <p class="hl-sub">Materiais de padrão internacional</p>
+              </div>
+            </div>
+            <div class="highlight-item">
+              <span class="material-symbols-outlined hl-icon">sync</span>
+              <div>
+                <h4 class="hl-title">Troca Facilitada</h4>
+                <p class="hl-sub">Até 30 dias após o recebimento</p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-
-<ng-template #loading>
-    <div class="container loading-state">
-        <p>Loading product details...</p>
-    </div>
-</ng-template>
+  </div>
+</main>

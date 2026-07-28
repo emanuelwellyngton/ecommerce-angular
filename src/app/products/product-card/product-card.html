@@ -1,12 +1,23 @@
-<div class="card product-card" [routerLink]="['/site/products', product.id]" style="cursor: pointer;">
-    <div class="card-image-container">
-        <img [src]="product.imageUrl" [alt]="product.name" class="card-image">
-        <span *ngIf="product.isNew" class="badge-new">Novo</span>
+<div class="product-card-wrap" [routerLink]="['/site/products', product.id]">
+  <div class="product-image-wrap">
+    <img [src]="product.imageUrl || 'https://via.placeholder.com/400x500?text=LUXE'" [alt]="product.name" class="product-img" />
+    <div class="product-badges">
+      <span *ngIf="product['new']" class="badge-new">Novo</span>
+      <span *ngIf="product.discountPrice" class="badge-sale">Promoção</span>
     </div>
-    <div class="card-body">
-        <span class="category">{{ product.category }}</span>
-        <h3 class="product-name">{{ product.name }}</h3>
-        <p class="product-price">{{ product.price | currency }}</p>
-        <button class="btn btn-primary add-btn" (click)="addToCart($event)">Adicionar</button>
+    <div class="product-overlay">
+      <button class="overlay-btn" (click)="addToCart($event)" title="Adicionar ao Carrinho">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        Adicionar ao Carrinho
+      </button>
     </div>
+  </div>
+  <div class="product-info">
+    <span class="product-category">{{ product.category }}</span>
+    <h3 class="product-name">{{ product.name }}</h3>
+    <div class="product-price">
+      <span *ngIf="product.discountPrice" class="price-original">{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+      <span class="price-main">{{ (product.discountPrice || product.price) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+    </div>
+  </div>
 </div>
