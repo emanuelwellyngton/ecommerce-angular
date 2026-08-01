@@ -1,9 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, Signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../core/services/product';
 import { CartService } from '../../core/services/cart.service';
 import { Product } from '../../core/models/product.model';
+import { WritableSignal, signal } from '@angular/core';
 
 @Component({
   selector: 'app-product-details',
@@ -18,7 +19,7 @@ export class ProductDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   product: Product | null = null;
-  loading = true;
+  loading = signal(true);
   quantity = 1;
   addedToCart = false;
 
@@ -27,6 +28,7 @@ export class ProductDetailsComponent implements OnInit {
   productImages: string[] = [];
 
   ngOnInit(): void {
+    console.log(this.loading());
     const id = +this.route.snapshot.paramMap.get('id')!;
     this.productService.getProductById(id).subscribe({
       next: (product) => {
@@ -38,10 +40,12 @@ export class ProductDetailsComponent implements OnInit {
         } else {
           this.product = null;
         }
-        this.loading = false;
+        this.loading.update(() => false);
+        console.log(this.loading());
       },
       error: () => {
-        this.loading = false;
+        this.loading.set(false);
+        console.log(this.loading());
       }
     });
   }

@@ -1,6 +1,6 @@
 <main class="details-page">
   <!-- Loading State -->
-  <div *ngIf="loading" class="details-loading">
+  <div *ngIf="loading()" class="details-loading">
     <div class="details-container">
       <div class="loading-grid">
         <div class="skeleton" style="aspect-ratio: 3/4; border-radius: 24px;"></div>
@@ -16,7 +16,7 @@
   </div>
 
   <!-- Not Found State -->
-  <div *ngIf="!loading && !product" class="not-found-state">
+  <div *ngIf="!loading() && !product" class="not-found-state">
     <div class="details-container">
       <div class="empty-card">
         <span class="material-symbols-outlined icon-empty">search_off</span>
@@ -28,7 +28,7 @@
   </div>
 
   <!-- Main Product Details View -->
-  <div *ngIf="!loading && product" class="details-content">
+  <div *ngIf="product" class="details-content">
     <div class="details-container">
       <!-- Breadcrumb -->
       <nav class="breadcrumb-nav" aria-label="Breadcrumb">
