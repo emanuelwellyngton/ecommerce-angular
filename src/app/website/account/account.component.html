@@ -1,97 +1,427 @@
 <main class="account-page">
   <div class="account-container">
-    <div class="account-header">
-      <h1 class="account-title">Minha Conta</h1>
-      <p *ngIf="user" class="account-greeting">Olá, {{ user.firstName || user.username }}!</p>
-    </div>
-
     <div class="account-layout">
-      <!-- Sidebar -->
-      <nav class="account-nav">
-        <button class="account-nav-item" [class.active]="activeTab === 'orders'" (click)="setTab('orders')">
-          <span class="material-symbols-outlined">shopping_bag</span> Meus Pedidos
-        </button>
-        <button class="account-nav-item" [class.active]="activeTab === 'addresses'" (click)="setTab('addresses')">
-          <span class="material-symbols-outlined">location_on</span> Endereços
-        </button>
-        <button class="account-nav-item" [class.active]="activeTab === 'payment'" (click)="setTab('payment')">
-          <span class="material-symbols-outlined">credit_card</span> Pagamentos
-        </button>
-        <button class="account-nav-item" [class.active]="activeTab === 'profile'" (click)="setTab('profile')">
-          <span class="material-symbols-outlined">person</span> Meus Dados
-        </button>
-        <button class="account-nav-item logout" (click)="logout()">
-          <span class="material-symbols-outlined">logout</span> Sair
-        </button>
-      </nav>
+      <!-- ═══════════ Sidebar Navigation ═══════════ -->
+      <aside class="sidebar-card">
+        <!-- User Info -->
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">
+            <span class="material-symbols-outlined">person</span>
+          </div>
+          <div>
+            <h3 class="sidebar-user-name">Minha Conta</h3>
+            <p class="sidebar-user-email" *ngIf="user">{{ user.email }}</p>
+            <p class="sidebar-user-email" *ngIf="!user">Gerencie seus dados</p>
+          </div>
+        </div>
 
-      <!-- Content -->
-      <div class="account-content">
-        <!-- Orders Tab -->
-        <div *ngIf="activeTab === 'orders'">
-          <h2 class="content-title">Meus Pedidos</h2>
-          <div *ngIf="orders.length === 0" class="empty-state">
+        <!-- Navigation Links -->
+        <nav class="sidebar-nav">
+          <button
+            class="sidebar-nav-item"
+            [class.active]="activeTab === 'orders'"
+            (click)="setTab('orders')"
+          >
             <span class="material-symbols-outlined">shopping_bag</span>
+            <span>Meus Pedidos</span>
+          </button>
+          <button
+            class="sidebar-nav-item"
+            [class.active]="activeTab === 'profile'"
+            (click)="setTab('profile')"
+          >
+            <span class="material-symbols-outlined">person</span>
+            <span>Meus Dados</span>
+          </button>
+          <button
+            class="sidebar-nav-item"
+            [class.active]="activeTab === 'addresses'"
+            (click)="setTab('addresses')"
+          >
+            <span class="material-symbols-outlined" [class.fill]="activeTab === 'addresses'">location_on</span>
+            <span>Endereços</span>
+          </button>
+          <button
+            class="sidebar-nav-item"
+            [class.active]="activeTab === 'payment'"
+            (click)="setTab('payment')"
+          >
+            <span class="material-symbols-outlined">payments</span>
+            <span>Métodos de Pagamento</span>
+          </button>
+        </nav>
+
+        <!-- Logout -->
+        <div class="sidebar-logout-section">
+          <button class="sidebar-logout-btn" (click)="logout()">
+            <span class="material-symbols-outlined">logout</span>
+            <span>Sair</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- ═══════════ Main Content ═══════════ -->
+      <div class="main-content">
+
+        <!-- ────── TAB: Meus Pedidos ────── -->
+        <div *ngIf="activeTab === 'orders'" class="tab-content">
+          <div class="tab-header">
+            <h1 class="tab-title">Meus Pedidos</h1>
+            <span class="tab-subtitle" *ngIf="orders.length > 0">Mostrando os últimos {{ orders.length }} pedidos</span>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!loading && orders.length === 0" class="empty-state-box">
+            <span class="material-symbols-outlined empty-icon">shopping_bag</span>
+            <h3>Nenhum pedido encontrado</h3>
             <p>Você ainda não realizou nenhum pedido.</p>
             <a routerLink="/site/products" class="btn btn-primary">Explorar Produtos</a>
           </div>
-          <div *ngFor="let order of orders" class="order-card">
-            <div class="order-card-header">
-              <span class="order-card-id">#{{ order.id }}</span>
-              <span class="badge" [ngClass]="getStatusClass(order.status)">{{ getStatusLabel(order.status) }}</span>
-            </div>
-            <div class="order-card-info">
-              <span>{{ order.items?.length || 0 }} itens</span>
-              <span class="order-card-total">{{ order.totalAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+
+          <!-- Order Cards -->
+          <div class="orders-list">
+            <div *ngFor="let order of orders" class="order-card">
+              <div class="order-card-left">
+                <div class="order-icon-box">
+                  <span class="material-symbols-outlined">{{ getStatusIcon(order.status) }}</span>
+                </div>
+                <div>
+                  <h3 class="order-card-id">Pedido #{{ order.id }}</h3>
+                  <p class="order-card-date">{{ formatDate(order.createdAt) }}</p>
+                </div>
+              </div>
+              <div class="order-card-right">
+                <div>
+                  <span class="order-status-badge" [ngClass]="getStatusColorClass(order.status)">
+                    {{ getStatusLabel(order.status) }}
+                  </span>
+                </div>
+                <div class="order-total-block">
+                  <p class="order-total-label">Total</p>
+                  <p class="order-total-value">{{ order.totalAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</p>
+                </div>
+                <button class="btn-details">Ver Detalhes</button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Addresses Tab -->
-        <div *ngIf="activeTab === 'addresses'">
-          <h2 class="content-title">Endereços</h2>
-          <div *ngIf="addresses.length === 0" class="empty-state">
-            <span class="material-symbols-outlined">location_on</span>
-            <p>Nenhum endereço cadastrado.</p>
+        <!-- ────── TAB: Meus Dados ────── -->
+        <div *ngIf="activeTab === 'profile'" class="tab-content">
+          <!-- Header Card -->
+          <div class="section-card header-card">
+            <h1 class="tab-title">Meus Dados</h1>
+            <p class="tab-desc">Gerencie suas informações pessoais e mantenha sua conta atualizada.</p>
           </div>
-          <div *ngFor="let addr of addresses" class="address-card">
-            <div class="address-main">
-              <p>{{ addr.street }}, {{ addr.number }}<span *ngIf="addr.complement">, {{ addr.complement }}</span></p>
-              <p>{{ addr.neighborhood }} - {{ addr.city }}/{{ addr.state }}</p>
-              <p>CEP: {{ addr.zipCode }}</p>
+
+          <!-- Personal Info Section -->
+          <section class="section-card">
+            <div class="section-title-row">
+              <span class="material-symbols-outlined section-icon">badge</span>
+              <h3 class="section-title">Informações Pessoais</h3>
             </div>
-            <span *ngIf="addr.isDefault" class="badge badge-success">Padrão</span>
+            <form class="profile-form" (ngSubmit)="saveProfile()">
+              <div class="form-grid">
+                <div class="form-field">
+                  <label class="field-label">Nome</label>
+                  <input type="text" class="field-input" [(ngModel)]="profileForm.firstName" name="firstName" />
+                </div>
+                <div class="form-field">
+                  <label class="field-label">Sobrenome</label>
+                  <input type="text" class="field-input" [(ngModel)]="profileForm.lastName" name="lastName" />
+                </div>
+                <div class="form-field">
+                  <label class="field-label">E-mail</label>
+                  <input type="email" class="field-input field-readonly" [value]="user?.email || ''" readonly />
+                </div>
+                <div class="form-field">
+                  <label class="field-label">Telefone</label>
+                  <input type="tel" class="field-input" [(ngModel)]="profileForm.phone" name="phone" />
+                </div>
+                <div class="form-field">
+                  <label class="field-label">CPF</label>
+                  <input type="text" class="field-input field-readonly" [(ngModel)]="profileForm.document" name="document" readonly />
+                  <p class="field-hint">
+                    <span class="material-symbols-outlined" style="font-size:14px;">info</span>
+                    CPF não pode ser alterado via painel.
+                  </p>
+                </div>
+              </div>
+            </form>
+          </section>
+
+          <!-- Change Password Section -->
+          <section class="section-card">
+            <div class="section-title-row">
+              <span class="material-symbols-outlined section-icon">lock</span>
+              <h3 class="section-title">Alterar Senha</h3>
+            </div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label class="field-label">Senha Atual</label>
+                <div class="input-with-icon">
+                  <input [type]="showCurrentPassword ? 'text' : 'password'" class="field-input" placeholder="••••••••" [(ngModel)]="passwordForm.currentPassword" />
+                  <button type="button" class="input-toggle" (click)="showCurrentPassword = !showCurrentPassword">
+                    <span class="material-symbols-outlined">{{ showCurrentPassword ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="field-label">Nova Senha</label>
+                <div class="input-with-icon">
+                  <input [type]="showNewPassword ? 'text' : 'password'" class="field-input" placeholder="Mínimo 8 caracteres" [(ngModel)]="passwordForm.newPassword" />
+                  <button type="button" class="input-toggle" (click)="showNewPassword = !showNewPassword">
+                    <span class="material-symbols-outlined">{{ showNewPassword ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Save Button -->
+          <div class="save-actions">
+            <span *ngIf="profileSaved" class="save-success">
+              <span class="material-symbols-outlined" style="font-size:18px;">check_circle</span>
+              Alterações salvas com sucesso!
+            </span>
+            <button class="btn btn-primary btn-save" (click)="saveProfile()" [disabled]="profileSaving">
+              {{ profileSaving ? 'Salvando...' : 'Salvar Alterações' }}
+            </button>
           </div>
         </div>
 
-        <!-- Payment Tab -->
-        <div *ngIf="activeTab === 'payment'">
-          <h2 class="content-title">Métodos de Pagamento</h2>
-          <div *ngIf="paymentMethods.length === 0" class="empty-state">
-            <span class="material-symbols-outlined">credit_card</span>
-            <p>Nenhum método de pagamento cadastrado.</p>
-          </div>
-          <div *ngFor="let pm of paymentMethods" class="payment-card">
-            <span class="material-symbols-outlined payment-icon">{{ pm.type === 'PIX' ? 'qr_code' : 'credit_card' }}</span>
+        <!-- ────── TAB: Endereços ────── -->
+        <div *ngIf="activeTab === 'addresses'" class="tab-content">
+          <div class="tab-header-row">
             <div>
-              <p class="payment-type">{{ getPaymentLabel(pm.type) }}</p>
-              <p *ngIf="pm.cardLast4" class="payment-sub">**** **** **** {{ pm.cardLast4 }}</p>
+              <h1 class="tab-title">Endereços Salvos</h1>
+              <p class="tab-desc">Gerencie seus endereços de entrega e faturamento.</p>
             </div>
-            <span *ngIf="pm.isDefault" class="badge badge-success">Padrão</span>
+            <button class="btn btn-primary btn-add" (click)="openAddressModal()">
+              <span class="material-symbols-outlined">add</span>
+              Adicionar Novo Endereço
+            </button>
+          </div>
+
+          <!-- Addresses Grid -->
+          <div class="addresses-grid">
+            <div
+              *ngFor="let addr of addresses"
+              class="address-card"
+              [class.address-default]="addr.isDefault"
+            >
+              <div class="address-card-header">
+                <div class="address-card-title-group">
+                  <span class="address-card-name">{{ addr.neighborhood || 'Endereço' }}</span>
+                  <div *ngIf="addr.isDefault" class="address-default-badge">Principal</div>
+                </div>
+                <span class="material-symbols-outlined address-card-icon">{{ addr.isDefault ? 'home' : 'work' }}</span>
+              </div>
+              <div class="address-card-body">
+                <p class="address-line">{{ addr.street }}, {{ addr.number }}<span *ngIf="addr.complement"> - {{ addr.complement }}</span></p>
+                <p class="address-line">{{ addr.neighborhood }}, {{ addr.city }} - {{ addr.state }}</p>
+                <p class="address-line">CEP: {{ addr.zipCode }}</p>
+              </div>
+              <div class="address-card-actions">
+                <button *ngIf="!addr.isDefault" class="action-link action-primary" (click)="$event.stopPropagation()">
+                  Tornar Principal
+                </button>
+                <div *ngIf="!addr.isDefault" class="action-divider"></div>
+                <button class="action-link" (click)="openAddressModal(addr)">
+                  <span class="material-symbols-outlined" style="font-size:16px;">edit</span> Editar
+                </button>
+                <button class="action-link action-danger" (click)="confirmDeleteAddress(addr.id)">
+                  <span class="material-symbols-outlined" style="font-size:16px;">delete</span> Excluir
+                </button>
+              </div>
+            </div>
+
+            <!-- Add Card (dashed) -->
+            <button class="add-card-dashed" (click)="openAddressModal()">
+              <div class="add-card-icon-circle">
+                <span class="material-symbols-outlined">add</span>
+              </div>
+              <span class="add-card-text">Novo Endereço</span>
+            </button>
           </div>
         </div>
 
-        <!-- Profile Tab -->
-        <div *ngIf="activeTab === 'profile' && user">
-          <h2 class="content-title">Meus Dados</h2>
-          <div class="profile-info">
-            <div class="profile-row"><span class="profile-label">Usuário</span><span class="profile-value">{{ user.username }}</span></div>
-            <div class="profile-row"><span class="profile-label">E-mail</span><span class="profile-value">{{ user.email }}</span></div>
-            <div class="profile-row"><span class="profile-label">Nome</span><span class="profile-value">{{ user.firstName || '-' }} {{ user.lastName || '' }}</span></div>
-            <div class="profile-row"><span class="profile-label">Telefone</span><span class="profile-value">{{ user.phone || '-' }}</span></div>
+        <!-- ────── TAB: Métodos de Pagamento ────── -->
+        <div *ngIf="activeTab === 'payment'" class="tab-content">
+          <div class="tab-header-row">
+            <div>
+              <h1 class="tab-title">Métodos de Pagamento</h1>
+              <p class="tab-desc">Gerencie seus cartões de crédito e outras opções para um checkout mais rápido.</p>
+            </div>
+          </div>
+
+          <div class="payment-section-header">
+            <h2 class="section-title">Cartões Salvos</h2>
+            <button class="btn btn-primary btn-add-sm" (click)="openPaymentModal()">
+              <span class="material-symbols-outlined" style="font-size:18px;">add</span>
+              Adicionar Novo Cartão
+            </button>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="paymentMethods.length === 0" class="empty-state-box">
+            <span class="material-symbols-outlined empty-icon">credit_card</span>
+            <h3>Nenhum método de pagamento</h3>
+            <p>Adicione um cartão para agilizar suas compras.</p>
+            <button class="btn btn-primary" (click)="openPaymentModal()">Adicionar Cartão</button>
+          </div>
+
+          <!-- Payment Cards Grid -->
+          <div *ngIf="paymentMethods.length > 0" class="payment-grid">
+            <div *ngFor="let pm of paymentMethods" class="payment-card">
+              <div class="payment-card-header">
+                <div>
+                  <span *ngIf="pm.isDefault" class="payment-default-badge">Principal</span>
+                  <div class="payment-card-number">•••• •••• •••• {{ pm.cardLast4 || '0000' }}</div>
+                </div>
+                <span class="material-symbols-outlined payment-type-icon">{{ pm.type === 'PIX' ? 'qr_code' : 'credit_card' }}</span>
+              </div>
+              <div class="payment-card-footer">
+                <div>
+                  <div class="payment-card-name">{{ getPaymentLabel(pm.type) }}</div>
+                  <div class="payment-card-brand" *ngIf="pm.cardBrand">{{ pm.cardBrand }}</div>
+                </div>
+                <div class="payment-card-actions">
+                  <button class="action-icon-btn" title="Remover" (click)="confirmDeletePayment(pm.id)">
+                    <span class="material-symbols-outlined" style="font-size:20px;">delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </main>
+
+<!-- ═══════════ ADDRESS MODAL ═══════════ -->
+<div *ngIf="showAddressModal" class="modal-overlay" (click)="closeAddressModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">{{ editingAddress ? 'Editar Endereço' : 'Adicionar Novo Endereço' }}</h2>
+      <button class="modal-close" (click)="closeAddressModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <!-- Form Content -->
+    <div class="modal-body">
+      <form class="modal-form">
+        <div class="modal-form-row full">
+          <label class="modal-label">CEP</label>
+          <input type="text" class="modal-input" placeholder="00000-000" [(ngModel)]="addressForm.zipCode" name="zipCode" />
+        </div>
+        <div class="modal-form-row full">
+          <label class="modal-label">Endereço (Logradouro)</label>
+          <input type="text" class="modal-input" placeholder="Rua, Avenida..." [(ngModel)]="addressForm.street" name="street" />
+        </div>
+        <div class="modal-form-row half">
+          <label class="modal-label">Número</label>
+          <input type="text" class="modal-input" placeholder="123" [(ngModel)]="addressForm.number" name="number" />
+        </div>
+        <div class="modal-form-row half">
+          <label class="modal-label">Complemento (Opcional)</label>
+          <input type="text" class="modal-input" placeholder="Apto, Bloco..." [(ngModel)]="addressForm.complement" name="complement" />
+        </div>
+        <div class="modal-form-row third">
+          <label class="modal-label">Bairro</label>
+          <input type="text" class="modal-input" placeholder="Seu bairro" [(ngModel)]="addressForm.neighborhood" name="neighborhood" />
+        </div>
+        <div class="modal-form-row third">
+          <label class="modal-label">Cidade</label>
+          <input type="text" class="modal-input" placeholder="Sua cidade" [(ngModel)]="addressForm.city" name="city" />
+        </div>
+        <div class="modal-form-row sixth">
+          <label class="modal-label">UF</label>
+          <select class="modal-input" [(ngModel)]="addressForm.state" name="state">
+            <option value="">UF</option>
+            <option *ngFor="let uf of ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']" [value]="uf">{{ uf }}</option>
+          </select>
+        </div>
+        <div class="modal-form-row full">
+          <label class="modal-checkbox-label">
+            <input type="checkbox" [(ngModel)]="addressForm.isDefault" name="isDefault" />
+            Definir como endereço principal
+          </label>
+        </div>
+      </form>
+    </div>
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="closeAddressModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="saveAddress()" [disabled]="addressSaving">
+        {{ addressSaving ? 'Salvando...' : 'Salvar Endereço' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PAYMENT MODAL ═══════════ -->
+<div *ngIf="showPaymentModal" class="modal-overlay" (click)="closePaymentModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Adicionar Novo Cartão</h2>
+      <button class="modal-close" (click)="closePaymentModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form class="modal-form">
+        <div class="modal-form-row full">
+          <label class="modal-label">Tipo</label>
+          <select class="modal-input" [(ngModel)]="paymentForm.type" name="type">
+            <option value="CREDIT_CARD">Cartão de Crédito</option>
+            <option value="DEBIT_CARD">Cartão de Débito</option>
+            <option value="PIX">Pix</option>
+            <option value="BOLETO">Boleto</option>
+          </select>
+        </div>
+        <div class="modal-form-row half">
+          <label class="modal-label">Últimos 4 dígitos</label>
+          <input type="text" class="modal-input" maxlength="4" placeholder="0000" [(ngModel)]="paymentForm.cardLast4" name="cardLast4" />
+        </div>
+        <div class="modal-form-row half">
+          <label class="modal-label">Bandeira</label>
+          <input type="text" class="modal-input" placeholder="Visa, Mastercard..." [(ngModel)]="paymentForm.cardBrand" name="cardBrand" />
+        </div>
+        <div class="modal-form-row full">
+          <label class="modal-checkbox-label">
+            <input type="checkbox" [(ngModel)]="paymentForm.isDefault" name="pmIsDefault" />
+            Definir como método principal
+          </label>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="closePaymentModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="savePaymentMethod()" [disabled]="paymentSaving">
+        {{ paymentSaving ? 'Salvando...' : 'Salvar Cartão' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ DELETE CONFIRMATION MODAL ═══════════ -->
+<div *ngIf="showDeleteConfirm" class="modal-overlay" (click)="closeDeleteConfirm()">
+  <div class="modal-container modal-sm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Confirmar Exclusão</h2>
+      <button class="modal-close" (click)="closeDeleteConfirm()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="delete-confirm-text">Tem certeza que deseja excluir este {{ deleteTarget?.type === 'address' ? 'endereço' : 'método de pagamento' }}? Esta ação não pode ser desfeita.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="closeDeleteConfirm()">Cancelar</button>
+      <button class="btn btn-danger" (click)="executeDelete()">Excluir</button>
+    </div>
+  </div>
+</div>
