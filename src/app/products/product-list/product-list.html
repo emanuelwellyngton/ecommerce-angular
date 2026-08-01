@@ -1,12 +1,208 @@
-<div class="product-list-page">
-    <div class="container">
-        <div class="page-header">
-            <h2>Todos os Produtos</h2>
-            <p>Explore nossa seleção exclusiva.</p>
+<main class="shop-page">
+  <div class="shop-container">
+    <!-- Header & Breadcrumbs -->
+    <div class="shop-header">
+      <div>
+        <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+          <ol class="bc-list">
+            <li class="bc-item">
+              <a routerLink="/site" class="bc-link">Início</a>
+            </li>
+            <li class="bc-item">
+              <div class="bc-sep-wrap">
+                <span class="material-symbols-outlined bc-sep">chevron_right</span>
+                <span class="bc-current">Loja</span>
+              </div>
+            </li>
+          </ol>
+        </nav>
+        <h1 class="shop-title">Todos os Produtos</h1>
+      </div>
+      <!-- Controls: Mobile Filter Toggle + Sort -->
+      <div class="shop-controls">
+        <button class="filter-toggle-btn" (click)="toggleMobileFilters()">
+          <span class="material-symbols-outlined" style="font-size:18px;">tune</span>
+          Filtros
+        </button>
+        <div class="sort-group">
+          <label for="sort" class="sort-label">Ordenar por:</label>
+          <div class="select-wrap">
+            <select id="sort" class="sort-select" [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
+              <option value="recommended">Recomendados</option>
+              <option value="price-asc">Preço: Menor para Maior</option>
+              <option value="price-desc">Preço: Maior para Menor</option>
+              <option value="newest">Mais Recentes</option>
+            </select>
+            <span class="material-symbols-outlined select-icon">expand_more</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shop-layout">
+      <!-- Sidebar Filters (Desktop) -->
+      <aside class="filters-sidebar" [class.mobile-open]="showMobileFilters">
+        <!-- Mobile close button -->
+        <div class="mobile-filter-header">
+          <h3>Filtros</h3>
+          <button class="close-filters-btn" (click)="toggleMobileFilters()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
         </div>
 
-        <div class="grid-cards" *ngIf="products$ | async as products">
-            <app-product-card *ngFor="let product of products" [product]="product"></app-product-card>
+        <div class="filters-inner">
+          <!-- Filter: Categories -->
+          <div class="filter-section">
+            <h3 class="filter-title">
+              Categorias
+              <span class="material-symbols-outlined filter-chevron">expand_less</span>
+            </h3>
+            <div class="filter-options">
+              <label *ngFor="let cat of categories" class="filter-checkbox-label" (click)="selectCategory(cat.name)">
+                <input type="checkbox" [checked]="cat.checked" class="filter-checkbox" />
+                <span [class.active-cat]="cat.checked">{{ cat.name }} ({{ cat.count }})</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Filter: Price -->
+          <div class="filter-section">
+            <h3 class="filter-title">
+              Preço
+              <span class="material-symbols-outlined filter-chevron">expand_less</span>
+            </h3>
+            <div class="price-inputs">
+              <div class="price-input-wrap">
+                <span class="price-currency">R$</span>
+                <input type="number" class="price-input" placeholder="Min" [(ngModel)]="priceMin" (ngModelChange)="applyFilters()" />
+              </div>
+              <span class="price-dash">-</span>
+              <div class="price-input-wrap">
+                <span class="price-currency">R$</span>
+                <input type="number" class="price-input" placeholder="Max" [(ngModel)]="priceMax" (ngModelChange)="applyFilters()" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Clear Filters -->
+          <button *ngIf="selectedCategory || priceMin || priceMax" class="clear-filters-btn" (click)="clearFilters()">
+            Limpar Filtros
+          </button>
         </div>
+      </aside>
+
+      <!-- Backdrop for mobile filters -->
+      <div *ngIf="showMobileFilters" class="filter-backdrop" (click)="toggleMobileFilters()"></div>
+
+      <!-- Product Grid Area -->
+      <div class="products-area">
+        <!-- Active Filter Tags -->
+        <div *ngIf="selectedCategory || priceMin || priceMax" class="active-tags">
+          <span *ngIf="selectedCategory" class="filter-tag">
+            {{ selectedCategory }}
+            <button (click)="selectCategory('Tudo')" class="tag-close">
+              <span class="material-symbols-outlined" style="font-size:14px;">close</span>
+            </button>
+          </span>
+          <span *ngIf="priceMin" class="filter-tag">
+            Min: R${{ priceMin }}
+            <button (click)="priceMin = null; applyFilters()" class="tag-close">
+              <span class="material-symbols-outlined" style="font-size:14px;">close</span>
+            </button>
+          </span>
+          <span *ngIf="priceMax" class="filter-tag">
+            Max: R${{ priceMax }}
+            <button (click)="priceMax = null; applyFilters()" class="tag-close">
+              <span class="material-symbols-outlined" style="font-size:14px;">close</span>
+            </button>
+          </span>
+          <button class="clear-all-btn" (click)="clearFilters()">Limpar todos</button>
+        </div>
+
+        <!-- Loading Skeleton -->
+        <div *ngIf="loading()" class="product-grid">
+          <div *ngFor="let i of [1,2,3,4,5,6]" class="product-skeleton">
+            <div class="skeleton" style="aspect-ratio:3/4; border-radius:8px;"></div>
+            <div class="skeleton" style="height:18px; margin-top:16px; border-radius:6px; width:75%;"></div>
+            <div class="skeleton" style="height:16px; margin-top:8px; border-radius:6px; width:40%;"></div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loading() && filteredProducts.length === 0" class="empty-results">
+          <span class="material-symbols-outlined" style="font-size:56px; color:var(--color-outline);">search_off</span>
+          <h3>Nenhum produto encontrado</h3>
+          <p>Tente ajustar os filtros ou buscar por outro termo.</p>
+          <button class="btn btn-outline" (click)="clearFilters()">Limpar Filtros</button>
+        </div>
+
+        <!-- Products Grid -->
+        <div *ngIf="!loading() && filteredProducts.length > 0" class="product-grid">
+          <div *ngFor="let product of pagedProducts" class="product-card-item" [routerLink]="['/site/products', product.id]">
+            <div class="pc-image-wrap">
+              <img
+                [src]="product.imageUrl || 'https://via.placeholder.com/400x530?text=LUXE'"
+                [alt]="product.name"
+                class="pc-image"
+              />
+              <!-- Badges -->
+              <div class="pc-badges">
+                <span *ngIf="getDiscountPercent(product) > 0" class="pc-badge pc-badge-discount">
+                  -{{ getDiscountPercent(product) }}%
+                </span>
+                <span *ngIf="product['new']" class="pc-badge pc-badge-new">Novo</span>
+              </div>
+              <!-- Add to cart floating button -->
+              <button class="pc-cart-btn" (click)="addToCart(product, $event)" title="Adicionar ao Carrinho">
+                <span class="material-symbols-outlined" style="font-size:20px;">shopping_bag</span>
+              </button>
+            </div>
+            <div class="pc-info">
+              <h4 class="pc-name">{{ product.name }}</h4>
+              <div class="pc-price-row">
+                <span class="pc-price-current">
+                  {{ (product.discountPrice || product.price) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+                </span>
+                <span *ngIf="product.discountPrice" class="pc-price-original">
+                  {{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div *ngIf="!loading() && totalPages > 1" class="pagination">
+          <button
+            class="page-btn"
+            [disabled]="currentPage === 1"
+            (click)="goToPage(currentPage - 1)"
+          >
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <ng-container *ngFor="let p of pageNumbers">
+            <button
+              *ngIf="p <= 3 || p === totalPages || (p >= currentPage - 1 && p <= currentPage + 1)"
+              class="page-btn"
+              [class.active]="currentPage === p"
+              (click)="goToPage(p)"
+            >
+              {{ p }}
+            </button>
+            <span
+              *ngIf="p === 3 && totalPages > 5 && currentPage < totalPages - 2"
+              class="page-ellipsis"
+            >...</span>
+          </ng-container>
+          <button
+            class="page-btn"
+            [disabled]="currentPage === totalPages"
+            (click)="goToPage(currentPage + 1)"
+          >
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+</main>
