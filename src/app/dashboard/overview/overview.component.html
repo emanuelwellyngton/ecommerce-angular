@@ -43,18 +43,19 @@
       <a routerLink="/dashboard/orders" class="view-all-link">Ver todos</a>
     </div>
 
-    <div *ngIf="loading" class="loading-state">
+    <div *ngIf="loading()" class="loading-state">
       <div class="skeleton" style="height: 48px; margin-bottom: 8px;"></div>
       <div class="skeleton" style="height: 48px; margin-bottom: 8px;"></div>
       <div class="skeleton" style="height: 48px;"></div>
     </div>
 
-    <div *ngIf="!loading && orders.length === 0" class="empty-state">
+
+    <div *ngIf="!loading() && orders.length === 0" class="empty-state">
       <span class="material-symbols-outlined">shopping_bag</span>
       <p>Nenhum pedido encontrado</p>
     </div>
 
-    <div *ngIf="!loading && orders.length > 0" class="orders-list">
+    <div *ngIf="!loading() && orders.length > 0" class="orders-list">
       <div *ngFor="let order of orders" class="order-row">
         <div class="order-info">
           <span class="order-id">#{{ order.id }}</span>

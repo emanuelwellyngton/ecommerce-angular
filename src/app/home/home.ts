@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../core/services/product';
@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
 
   featuredProducts: Product[] = [];
   faqs: Faq[] = [];
-  loading = true;
+  loading = signal(true);
   openFaqId: number | null = null;
 
   categories = [
@@ -34,13 +34,13 @@ export class HomeComponent implements OnInit {
     this.productService.getProducts().subscribe({
       next: (products) => {
         this.featuredProducts = products.slice(0, 4);
-        this.loading = false;
+        this.loading.update(() => false);
       },
-      error: () => { this.loading = false; }
+      error: () => { this.loading.update(() => false); }
     });
     this.faqService.getActiveFaqs().subscribe({
       next: (faqs) => { this.faqs = faqs.slice(0, 4); },
-      error: () => {}
+      error: () => { this.loading.update(() => false); }
     });
   }
 

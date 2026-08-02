@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminService } from '../../core/services/admin.service';
@@ -15,7 +15,7 @@ export class OverviewComponent implements OnInit {
   private adminService = inject(AdminService);
   
   orders: Order[] = [];
-  loading = true;
+  loading = signal(true);
   totalRevenue = 0;
   pendingOrders = 0;
   totalOrders = 0;
@@ -27,9 +27,9 @@ export class OverviewComponent implements OnInit {
         this.totalOrders = orders.length;
         this.pendingOrders = orders.filter(o => o.status === 'PENDING' || o.status === 'PAID').length;
         this.totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-        this.loading = false;
+        this.loading.update(() => false);
       },
-      error: () => { this.loading = false; }
+      error: () => { this.loading.update(() => false); }
     });
   }
 

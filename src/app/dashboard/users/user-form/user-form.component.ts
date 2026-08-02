@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
@@ -18,7 +18,7 @@ export class UserFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   form!: FormGroup;
-  loading = false;
+  loading = signal(false);
   submitting = false;
   isEditMode = false;
   userId: number | null = null;
@@ -42,7 +42,7 @@ export class UserFormComponent implements OnInit {
     });
 
     if (this.isEditMode && this.userId) {
-      this.loading = true;
+      this.loading.update(() => true);
       this.adminService.getUserById(this.userId).subscribe({
         next: (user) => {
           this.form.patchValue({
@@ -53,9 +53,9 @@ export class UserFormComponent implements OnInit {
             roles: user.roles || ['ROLE_USER'],
             active: user.active
           });
-          this.loading = false;
+          this.loading.update(() => false);
         },
-        error: () => { this.loading = false; }
+        error: () => { this.loading.update(() => false); }
       });
     }
   }

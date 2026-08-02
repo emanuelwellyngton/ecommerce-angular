@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
@@ -19,7 +19,7 @@ export class ProductFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   form!: FormGroup;
-  loading = false;
+  loading = signal(false);
   submitting = false;
   isEditMode = false;
   productId: number | null = null;
@@ -42,15 +42,15 @@ export class ProductFormComponent implements OnInit {
       isNew: [false]
     });
     if (this.isEditMode && this.productId) {
-      this.loading = true;
+      this.loading.update(() => true);
       this.productService.getProductById(this.productId).subscribe({
         next: (product) => {
           if (product) {
             this.form.patchValue({ name: product.name, description: product.description, price: product.price, discountPrice: product.discountPrice, stock: product.stock, imageUrl: product.imageUrl, category: product.category, active: product.active !== false, isNew: product['new'] || false });
           }
-          this.loading = false;
+          this.loading.update(() => false);
         },
-        error: () => { this.loading = false; }
+        error: () => { this.loading.update(() => false); }
       });
     }
   }

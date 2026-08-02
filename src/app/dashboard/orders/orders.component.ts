@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../core/services/admin.service';
@@ -15,7 +15,7 @@ export class OrdersComponent implements OnInit {
   private adminService = inject(AdminService);
   orders: Order[] = [];
   filteredOrders: Order[] = [];
-  loading = true;
+  loading = signal(true);
   searchQuery = '';
   selectedStatus = '';
   updatingOrderId: number | null = null;
@@ -27,14 +27,14 @@ export class OrdersComponent implements OnInit {
   }
 
   loadOrders(): void {
-    this.loading = true;
+    this.loading.update(() => true);
     this.adminService.getAllOrders().subscribe({
       next: (orders) => {
         this.orders = orders;
         this.applyFilter();
-        this.loading = false;
+        this.loading.update(() => false);
       },
-      error: () => { this.loading = false; }
+      error: () => { this.loading.update(() => false); }
     });
   }
 

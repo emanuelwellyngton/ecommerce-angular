@@ -26,16 +26,16 @@
 
   <!-- Table -->
   <div class="table-card">
-    <div *ngIf="loading" class="loading-state">
+    <div *ngIf="loading()" class="loading-state">
       <div *ngFor="let i of [1,2,3,4,5]" class="skeleton" style="height: 56px; margin-bottom: 4px;"></div>
     </div>
 
-    <div *ngIf="!loading && filteredOrders.length === 0" class="empty-state">
+    <div *ngIf="!loading() && filteredOrders.length === 0" class="empty-state">
       <span class="material-symbols-outlined">shopping_bag</span>
       <p>Nenhum pedido encontrado</p>
     </div>
 
-    <div *ngIf="!loading && filteredOrders.length > 0" class="table-responsive">
+    <div *ngIf="!loading() && filteredOrders.length > 0" class="table-responsive">
       <table>
         <thead>
           <tr>

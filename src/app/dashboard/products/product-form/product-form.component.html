@@ -3,9 +3,9 @@
     <a routerLink="/dashboard/products" class="back-link"><span class="material-symbols-outlined">arrow_back</span> Voltar</a>
     <h2 class="page-title">{{ isEditMode ? 'Editar Produto' : 'Novo Produto' }}</h2>
   </header>
-  <div *ngIf="loading" class="loading-state"><div class="skeleton" style="height:500px"></div></div>
+  <div *ngIf="loading()" class="loading-state"><div class="skeleton" style="height:500px"></div></div>
   <div *ngIf="successMessage" class="success-msg"><span class="material-symbols-outlined">check_circle</span> {{ successMessage }}</div>
-  <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()" class="product-form">
+  <form *ngIf="!loading()" [formGroup]="form" (ngSubmit)="onSubmit()" class="product-form">
     <div class="form-grid">
       <div class="form-card">
         <h3 class="form-section-title">Informações do Produto</h3>

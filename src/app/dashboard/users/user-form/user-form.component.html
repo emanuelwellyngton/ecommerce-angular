@@ -7,11 +7,11 @@
     <h2 class="page-title">{{ isEditMode ? 'Editar Usuário' : 'Novo Usuário' }}</h2>
   </header>
 
-  <div *ngIf="loading" class="loading-state">
+  <div *ngIf="loading()" class="loading-state">
     <div class="skeleton" style="height: 400px;"></div>
   </div>
 
-  <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()" class="user-form">
+  <form *ngIf="!loading()" [formGroup]="form" (ngSubmit)="onSubmit()" class="user-form">
     <div class="form-card">
       <h3 class="form-section-title">Informações da Conta</h3>
 

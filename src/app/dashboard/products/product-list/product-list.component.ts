@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -16,17 +16,17 @@ export class ProductManageListComponent implements OnInit {
   private productService = inject(ProductService);
   products: Product[] = [];
   filteredProducts: Product[] = [];
-  loading = true;
+  loading = signal(true);
   searchQuery = '';
   deletingId: number | null = null;
 
   ngOnInit(): void { this.loadProducts(); }
 
   loadProducts(): void {
-    this.loading = true;
+    this.loading.update(() => true);
     this.productService.getProducts().subscribe({
-      next: (products) => { this.products = products; this.filteredProducts = products; this.loading = false; },
-      error: () => { this.loading = false; }
+      next: (products) => { this.products = products; this.filteredProducts = products; this.loading.update(() => false); },
+      error: () => { this.loading.update(() => false); }
     });
   }
 

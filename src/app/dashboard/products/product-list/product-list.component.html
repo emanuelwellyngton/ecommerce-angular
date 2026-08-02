@@ -14,7 +14,7 @@
     <input type="text" class="search-input" placeholder="Buscar produtos..." [(ngModel)]="searchQuery" (input)="applyFilter()" />
   </div>
   <div class="table-card">
-    <div *ngIf="loading" class="loading-state">
+    <div *ngIf="loading()" class="loading-state">
       <div *ngFor="let i of [1,2,3,4]" class="skeleton" style="height: 72px; margin-bottom: 4px;"></div>
     </div>
     <div *ngIf="!loading && filteredProducts.length === 0" class="empty-state">
@@ -22,7 +22,7 @@
       <p>Nenhum produto encontrado</p>
       <a routerLink="/dashboard/products/new" class="btn btn-primary">Adicionar Produto</a>
     </div>
-    <div *ngIf="!loading && filteredProducts.length > 0" class="table-responsive">
+    <div *ngIf="!loading() && filteredProducts.length > 0" class="table-responsive">
       <table>
         <thead>
           <tr>
