@@ -20,12 +20,12 @@
     <!-- Delivery Step -->
     <div *ngIf="step === 'delivery'" class="step-content">
       <h2 class="step-title">Selecionar Endereço de Entrega</h2>
-      <div *ngIf="addresses.length === 0" class="empty-state">
+      <div *ngIf="addresses().length === 0" class="empty-state">
         <span class="material-symbols-outlined">location_on</span>
         <p>Nenhum endereço cadastrado.</p>
         <a routerLink="/site/account" class="btn btn-primary">Adicionar Endereço</a>
       </div>
-      <div *ngFor="let addr of addresses" class="address-option" 
+      <div *ngFor="let addr of addresses()" class="address-option" 
         [class.selected]="selectedAddressId === addr.id"
         (click)="selectedAddressId = addr.id">
         <div class="radio-circle"></div>
@@ -81,9 +81,9 @@
       </div>
       <div class="step-actions">
         <button class="btn btn-outline" (click)="step = 'payment'">Voltar</button>
-        <button class="btn btn-primary" (click)="placeOrder()" [disabled]="loading">
-          <span *ngIf="loading" class="material-symbols-outlined spinning">progress_activity</span>
-          <span *ngIf="!loading">Confirmar Pedido</span>
+        <button class="btn btn-primary" (click)="placeOrder()" [disabled]="loading()">
+          <span *ngIf="loading()" class="material-symbols-outlined spinning">progress_activity</span>
+          <span *ngIf="!loading()">Confirmar Pedido</span>
         </button>
       </div>
     </div>

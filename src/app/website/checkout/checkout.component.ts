@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, Signal, WritableSignal, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -25,14 +25,14 @@ export class CheckoutComponent implements OnInit {
   cartItems$ = this.cartService.cartItems$;
   cartTotal$ = this.cartService.cartTotal$;
   
-  addresses: Address[] = [];
+  addresses: WritableSignal<Address[]> = signal([]);
   paymentMethods: PaymentMethod[] = [];
   
   selectedAddressId: number | null = null;
   selectedPaymentId: number | null = null;
   
   step: 'delivery' | 'payment' | 'review' | 'confirmed' | 'denied' = 'delivery';
-  loading = false;
+  loading = signal(false);
   orderId: number | null = null;
 
   ngOnInit(): void {
@@ -40,7 +40,7 @@ export class CheckoutComponent implements OnInit {
       this.router.navigate(['/site/login']);
       return;
     }
-    this.userService.getAddresses().subscribe({ next: (a) => { this.addresses = a; if (a.length) this.selectedAddressId = a.find(x => x.isDefault)?.id || a[0].id; } });
+    this.userService.getAddresses().subscribe({ next: (a) => {this.addresses.update(() => a); if (a.length) this.selectedAddressId = a.find(x => x.isDefault)?.id || a[0].id; } });
     this.userService.getPaymentMethods().subscribe({ next: (p) => { this.paymentMethods = p; if (p.length) this.selectedPaymentId = p.find(x => x.isDefault)?.id || p[0].id; } });
   }
 
@@ -50,12 +50,14 @@ export class CheckoutComponent implements OnInit {
   }
 
   placeOrder(): void {
-    this.loading = true;
+    console.log("teste");
+    this.loading.update(() => true);
     let cartItems: any[] = [];
+    console.log(cartItems);
     this.cartService.cartItems$.subscribe(items => {
       cartItems = items.map(i => ({ productId: i.id, quantity: i.quantity }));
     }).unsubscribe();
-    
+
     this.orderService.createOrder({
       shippingAddressId: this.selectedAddressId!,
       paymentMethodId: this.selectedPaymentId!,
@@ -65,11 +67,11 @@ export class CheckoutComponent implements OnInit {
         this.orderId = order.id;
         this.cartService.clearCart();
         this.step = order.status === 'DENIED' ? 'denied' : 'confirmed';
-        this.loading = false;
+        this.loading.update(() => false);
       },
       error: () => {
         this.step = 'denied';
-        this.loading = false;
+        this.loading.update(() => false);
       }
     });
   }
